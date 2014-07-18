@@ -36,14 +36,24 @@
 
 			left.thigh = add.sprite(350, 300, 'robot-thigh-left');
 			physics.p2.enable(left.thigh, debugBodies);
-			left.thigh.body.addPolygon({}, [[42,0],[15,127],[42,127],[50,7]]);
+			//left.thigh.body.addPolygon({}, [[42,0],[15,127],[42,127],[50,7]]);
 			left.thigh.body.setCollisionGroup(bodyPartsCollisionGroup);
 
 			left.foot = add.sprite(300, 400, 'robot-foot-left');
 			physics.p2.enable(left.foot, debugBodies);
-			left.foot.body.addPolygon({}, [[80,54],[109,55],[121,190],[8,193],[54,159]]);
+			//left.foot.body.addPolygon({}, [[80,54],[109,55],[121,190],[8,193],[54,159]]);
 			left.foot.body.setCollisionGroup(bodyPartsCollisionGroup);
-		
+			
+			right.thigh = add.sprite(450, 300, 'robot-thigh-right');
+			physics.p2.enable(right.thigh, debugBodies);
+			//right.thigh.body.addPolygon({}, []);
+			right.thigh.body.setCollisionGroup(bodyPartsCollisionGroup);
+
+			right.foot = add.sprite(450, 400, 'robot-foot-right');
+			physics.p2.enable(right.foot, debugBodies);
+			//right.foot.body.addPolygon({}, []);
+			right.foot.body.setCollisionGroup(bodyPartsCollisionGroup);
+
 			left.knee = physics.p2.createRevoluteConstraint(left.foot, [22,-69], left.thigh, [-4,61]);
 			left.knee.upperLimitEnabled = true;
 			left.knee.upperLimit = Math.PI / 8;
