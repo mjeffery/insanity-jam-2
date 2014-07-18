@@ -1,0 +1,21 @@
+{
+  "name": "proletariatpunch",
+  "version": "0.0.0",
+  "author": "",
+  "description": "",
+  "repository": "",
+  "dependencies": {},
+  "devDependencies": {
+	"grunt": "*",
+    "grunt-contrib-copy": "*",
+    "grunt-contrib-concat": "*",
+    "grunt-contrib-watch": "*",
+    "grunt-contrib-connect": "*",
+    "grunt-contrib-clean": "*",
+    "grunt-contrib-uglify": "*",
+    "grunt-usemin": "*",
+    "grunt-filerev": "*",
+    "grunt-text-replace": "*",
+    "load-grunt-tasks": "*"
+  }
+}
