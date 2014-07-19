@@ -33,22 +33,22 @@
 	}
 
 	LimbController.prototype = {
-		extend: function() {
+		extend: function(speed) {
 			var limb = this.limb, 
 				torso = this.torso;
 
-			this.driveJoint(torso.joint, 1, torso.options.extended);
-			this.driveJoint(limb.joint, 1, limb.options.extended);
+			this.driveJoint(torso.joint, speed, torso.options.extended);
+			this.driveJoint(limb.joint, speed, limb.options.extended);
 
 			this.state = 'extending';
 		},
 
-		retract: function() {
+		retract: function(speed) {
 			var limb = this.limb, 
 				torso = this.torso;
 
-			this.driveJoint(torso.joint, 1, torso.options.retracted);
-			this.driveJoint(limb.joint, 1, limb.options.retracted);
+			this.driveJoint(torso.joint, speed, torso.options.retracted);
+			this.driveJoint(limb.joint, speed, limb.options.retracted);
 
 			this.state = 'retracting';
 		},
@@ -63,9 +63,32 @@
 			else
 				joint.upperLimit = options.limit;
 
-			if(!joint.motorIsEnabled()) join.enableMotor();
+			if(!joint.motorIsEnabled()) joint.enableMotor();
 			joint.setMotorSpeed(speed * options.motorDir);
-		}
+		},
+
+		mirror: function(torsoJoint, limbJoint) {
+			return new LimbController(
+				torsoJoint,
+				negateJointOptions(this.torso.options),
+				limbJoint,
+				negateJointOptions(this.limb.options)
+			);
+
+			function negateDriveOptions(driveOpts) {
+				return {
+					limit: -driveOpts.limit,
+					motorDir: -driveOpts.motorDir
+				}
+			}
+
+			function negateJointOptions(jointOptions) {
+				return {
+					retracted: negateDriveOptions(jointOptions.retracted),
+					extended: negateDriveOptions(jointOptions.extended)
+				}
+			}
+		},
 
 	};
 

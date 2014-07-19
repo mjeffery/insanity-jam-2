@@ -27,10 +27,17 @@
 			ground.body.setCollisionGroup(worldCollisionGroup);
 			ground.body.collides(robot.collisionGroups.bodyParts);
 
-			var key = this.key = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-			key.onDown.add(function() {
+			var squat = this.squat = this.input.keyboard.addKey(Phaser.Keyboard.DOWN);
+			squat.onDown.add(function() {
 				robot.squat();
 			});
+			
+			var jump = this.squat = this.input.keyboard.addKey(Phaser.Keyboard.UP);
+			jump.onDown.add(function() {
+				robot.jump();
+			});
+
+			add.bitmapText(150, 20, 'minecraftia', 'Press "DOWN" to squat and "UP" to jump!', 16);
 		},
 
 		update: function() {

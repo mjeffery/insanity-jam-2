@@ -43,6 +43,10 @@
 				retracted: {
 					limit: -3 * Math.PI / 4,
 					motorDir: 1
+				},
+				extended: {
+					limit: Math.PI / 8,
+					motorDir: -1
 				}
 			},
 			left.knee,
@@ -50,16 +54,15 @@
 				retracted: {
 					limit:  3 * Math.PI / 4,
 					motorDir: -1
+				},
+				extended: {
+					limit: -Math.PI / 8,
+					motorDir: 1
 				}
 			}
 		);
 
-		right.legController = new LimbController(
-			right.hip,
-			{},
-			right.knee,
-			{}
-		);
+		right.legController = left.legController.mirror(right.hip, right.knee);
 	}
 
 	_.extend(Robot, {
@@ -101,40 +104,13 @@
 		}, 
 
 		squat: function() {
-			this.contractLeftLeg();
-			this.contractRightLeg();
+			this.left.legController.retract(1);
+			this.right.legController.retract(1);
 		},
 
-		contractLeftLeg: function() {
-			var hip = this.left.hip,
-				knee = this.left.knee;
-			
-			if(!hip.motorIsEnabled()) hip.enableMotor();
-			if(!knee.motorIsEnabled()) knee.enableMotor();
-
-			hip.lowerLimit = -3 * Math.PI / 4;
-			knee.upperLimit = 3 * Math.PI / 4;
-
-			hip.setMotorSpeed(1);
-			knee.setMotorSpeed(-1);
-		},
-
-		contractRightLeg: function() {
-			var hip = this.right.hip,
-				knee = this.right.knee;
-
-			if(!hip.motorIsEnabled()) hip.enableMotor();
-			if(!knee.motorIsEnabled()) knee.enableMotor();
-
-			hip.upperLimit = 3 * Math.PI / 4;
-			knee.lowerLimit = -3 * Math.PI / 4;
-
-			hip.setMotorSpeed(-1);
-			knee.setMotorSpeed(1);
-		},
-
-		extendLeftLeg: function() {
-			
+		jump: function() {
+			this.left.legController.extend(10);
+			this.right.legController.extend(10);
 		},
 
 		destroy: function() {
