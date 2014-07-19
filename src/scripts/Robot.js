@@ -14,26 +14,37 @@
 		var left = this.left = {}, 
 			right = this.right = {};
 
+		left.thigh = this.addPart(335, 335.6, 'robot thigh left');
+		right.thigh = this.addPart(407.6, 339.1, 'robot thigh right');
+
+		left.arm = this.addPart(100, 100, 'robot arm left');
+		right.arm = this.addPart(300, 100, 'robot arm right');
+		
 		var torso = this.torso = this.addPart(375, 228.6, 'robot torso');
 
 		var head = this.head = this.addPart(370, 180, 'robot head');	
 		head.mass = 1;
 
-		left.thigh = this.addPart(335, 335.6, 'robot thigh left');
-
 		left.foot = this.addPart(298.5, 436.5, 'robot foot left');
 		left.foot.body.mass = 1;
 	
-		right.thigh = this.addPart(407.6, 339.1, 'robot thigh right');
-
 		right.foot = this.addPart(460.6, 458.3, 'robot foot right');
 		right.foot.body.mass = 1;
+
+		left.hand = this.addPart(200, 300, 'robot hand left');
+		right.hand = this.addPart(400, 300, 'robot hand right');
 
 		left.knee = this.addJoint(left.foot, [22,-69], left.thigh, [-4,61]);
 		right.knee = this.addJoint(right.foot, [-33, -71], right.thigh, [2,62]);
 
 		left.hip = this.addJoint(left.thigh, [12,-58], torso, [-18,53]);
 		right.hip = this.addJoint(right.thigh, [-14,-57], torso, [15, 55]);
+
+		left.shoulder = this.addJoint(left.arm, [84-64,20-64], torso, [27-64,22-64]);
+		right.shoulder = this.addJoint(right.arm, [43-64,19-64], torso, [103-64,28-64]);
+
+		left.elbow = this.addJoint(left.hand, [57-64,191-128], left.arm, [33-64,115-64]);
+		right.elbow = this.addJoint(right.hand, [70-64,188-128], right.arm, [94-64,116-64]);
 
 		this.neck = this.addJoint(torso, [0,-49], head, [0,0]);
 		
@@ -62,7 +73,33 @@
 			}
 		);
 
+		left.armController = new LimbController(
+			left.shoulder,
+			{
+				retracted: {
+					limit: Math.PI / 8,
+					motorDir: -1
+				},
+				extended: {
+					limit: -3 * Math.PI / 8,
+					motorDir: 1
+				}
+			},
+			left.elbow,
+			{
+				retracted: {
+					limit: -Math.PI / 8,
+					motorDir: 2
+				},
+				extended: {
+					limit: Math.PI,
+					motorDir: -1.75
+				}
+			}
+		);
+
 		right.legController = left.legController.mirror(right.hip, right.knee);
+		right.armController = left.armController.mirror(right.shoulder, right.elbow);
 	}
 
 	_.extend(Robot, {
@@ -73,6 +110,10 @@
 			load.image('robot thigh right', 'assets/img/robot thigh right.png');
 			load.image('robot foot left', 'assets/img/robot foot left.png');
 			load.image('robot foot right', 'assets/img/robot foot right.png');
+			load.image('robot arm left', 'assets/img/robot arm left.png');
+			load.image('robot arm right', 'assets/img/robot arm right.png');
+			load.image('robot hand left', 'assets/img/robot hand left.png');
+			load.image('robot hand right', 'assets/img/robot hand right.png');
 
 			load.physics('robot physics', 'assets/physics/robot.json');
 		}
@@ -111,6 +152,16 @@
 		jump: function() {
 			this.left.legController.extend(10);
 			this.right.legController.extend(10);
+		},
+
+		punch: function() {
+			this.left.armController.extend(5);
+			this.right.armController.extend(5);
+		},
+
+		defend: function() {
+			this.left.armController.retract(3);
+			this.right.armController.retract(3);
 		},
 
 		destroy: function() {
