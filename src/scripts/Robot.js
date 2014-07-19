@@ -56,7 +56,7 @@
 					motorDir: 1
 				},
 				extended: {
-					limit: Math.PI / 8,
+					limit: 0,
 					motorDir: -1
 				}
 			},
@@ -67,7 +67,7 @@
 					motorDir: -1
 				},
 				extended: {
-					limit: -Math.PI / 8,
+					limit: 0,
 					motorDir: 1
 				}
 			}
@@ -100,6 +100,36 @@
 
 		right.legController = left.legController.mirror(right.hip, right.knee);
 		right.armController = left.armController.mirror(right.shoulder, right.elbow);
+
+		var keyboard = game.input.keyboard,
+			keys = this.keys = {
+				retractLeftArm: keyboard.addKey(Phaser.Keyboard.S),
+				retractRightArm: keyboard.addKey(Phaser.Keyboard.L),
+				extendLeftArm: keyboard.addKey(Phaser.Keyboard.A),
+				extendRightArm: keyboard.addKey(Phaser.Keyboard.COLON),
+				retractLeftLeg: keyboard.addKey(Phaser.Keyboard.F),
+				retractRightLeg: keyboard.addKey(Phaser.Keyboard.J),
+				extendLeftLeg: keyboard.addKey(Phaser.Keyboard.D),
+				extendRightLeg: keyboard.addKey(Phaser.Keyboard.K)
+			};
+		
+		keys.retractLeftArm.onDown.add(function() { left.armController.retract(3); });
+		keys.extendLeftArm.onDown.add(function() { left.armController.extend(5); });
+
+		keys.retractRightArm.onDown.add(function() { right.armController.retract(3); });
+		keys.extendRightArm.onDown.add(function() { right.armController.extend(5); });
+
+		keys.retractLeftLeg.onDown.add(function() { left.legController.retract(1); });
+		keys.extendLeftLeg.onDown.add(function() { left.legController.extend(10); });
+
+		keys.retractRightLeg.onDown.add(function() { right.legController.retract(1); });
+		keys.extendRightLeg.onDown.add(function() { right.legController.extend(10); });
+
+
+		left.legController.extend(1);
+		right.legController.extend(1);
+		left.armController.retract(1);
+		right.armController.retract(1);
 	}
 
 	_.extend(Robot, {
