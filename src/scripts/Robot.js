@@ -101,6 +101,7 @@
 		right.legController = left.legController.mirror(right.hip, right.knee);
 		right.armController = left.armController.mirror(right.shoulder, right.elbow);
 
+		/*
 		var keyboard = game.input.keyboard,
 			keys = this.keys = {
 				retractLeftArm: keyboard.addKey(Phaser.Keyboard.S),
@@ -124,7 +125,7 @@
 
 		keys.retractRightLeg.onDown.add(function() { right.legController.retract(1); });
 		keys.extendRightLeg.onDown.add(function() { right.legController.extend(10); });
-
+		*/
 
 		left.legController.extend(1);
 		right.legController.extend(1);
@@ -192,6 +193,24 @@
 		defend: function() {
 			this.left.armController.retract(3);
 			this.right.armController.retract(3);
+		},
+
+		processCommandString: function(commandString) {
+			var side, controller, action, self = this;
+
+			_.chain(commandString)
+				.groupBy()
+				.reduce(function(memo, value, key) {
+					memo[key] = value.length || 0;
+					return memo;
+				}, {})
+				.forEach(function(timesPressed, command) {
+					side = (_.contains(command, 'left'))  ? self.left : self.right;
+					controller = (_.contains(command, 'arm')) ? side.armController : side.legController;
+					action = (_.contains(command, 'extend')) ? 'extend' : 'retract';
+
+					controller[action](timesPressed);
+				});
 		},
 
 		destroy: function() {

@@ -27,18 +27,23 @@
 			ground.body.setCollisionGroup(worldCollisionGroup);
 			ground.body.collides(robot.collisionGroups.bodyParts);
 			
+			/*
 			var keys = this.input.keyboard.createCursorKeys();
 			keys.down.onDown.add(robot.squat, robot);
 			keys.up.onDown.add(robot.jump, robot);
 			keys.left.onDown.add(robot.defend, robot);
 			keys.right.onDown.add(robot.punch, robot);
+			*/
+
+			var commandBuffer = this.commandBuffer = new CommandBuffer(this.game);
+			commandBuffer.events.onStringEnd.add(robot.processCommandString, robot);
 
 			add.bitmapText(150, 20, 'minecraftia', 'Press "DOWN" to squat and "UP" to jump!', 16);
 			add.bitmapText(130, 40, 'minecraftia', 'Press "RIGHT" to punch and "LEFT" to defend!', 16);
 		},
 
 		update: function() {
-
+			this.commandBuffer.update();
 		}
 	};
 
