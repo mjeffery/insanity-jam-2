@@ -37,6 +37,8 @@
 
 			//add.bitmapText(150, 20, 'minecraftia', 'Press "DOWN" to squat and "UP" to jump!', 16);
 			//add.bitmapText(130, 40, 'minecraftia', 'Press "RIGHT" to punch and "LEFT" to defend!', 16);
+			
+			new Instructions(this.game);
 
 			var commandBuffer = this.commandBuffer = new CommandBuffer(this.game);
 			var commandKeyPool = this.commandKeyPool = new CommandKeyPool(this.game);

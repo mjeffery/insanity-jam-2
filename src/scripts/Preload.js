@@ -20,6 +20,7 @@
 			CommandKeyPool.preload(load);
 			TimerBar.preload(load);
 			CommandDisplay.preload(load);
+			Instructions.preload(load);
 
 			load.onLoadComplete.addOnce(this.onLoadComplete, this);					
 		},
