@@ -14,8 +14,12 @@
 			load.setPreloadSprite(loadingBar);
 
 			load.bitmapFont('minecraftia', 'assets/font/minecraftia.png', 'assets/font/minecraftia.xml');
+
 			Robot.preload(load);
 			Game.preload(load);
+			CommandKeyPool.preload(load);
+			TimerBar.preload(load);
+			CommandDisplay.preload(load);
 
 			load.onLoadComplete.addOnce(this.onLoadComplete, this);					
 		},

@@ -35,11 +35,27 @@
 			keys.right.onDown.add(robot.punch, robot);
 			*/
 
-			var commandBuffer = this.commandBuffer = new CommandBuffer(this.game);
-			commandBuffer.events.onStringEnd.add(robot.processCommandString, robot);
+			//add.bitmapText(150, 20, 'minecraftia', 'Press "DOWN" to squat and "UP" to jump!', 16);
+			//add.bitmapText(130, 40, 'minecraftia', 'Press "RIGHT" to punch and "LEFT" to defend!', 16);
 
-			add.bitmapText(150, 20, 'minecraftia', 'Press "DOWN" to squat and "UP" to jump!', 16);
-			add.bitmapText(130, 40, 'minecraftia', 'Press "RIGHT" to punch and "LEFT" to defend!', 16);
+			var commandBuffer = this.commandBuffer = new CommandBuffer(this.game);
+			var commandKeyPool = this.commandKeyPool = new CommandKeyPool(this.game);
+			var commandDisplay = this.commandDisplay = new CommandDisplay(
+				this.game,
+				commandKeyPool,
+				commandBuffer.commandsToKeyCodes
+			);
+			commandDisplay.x = 200;			 // why are these not in real coordinates?
+			commandDisplay.y = 275;
+			commandDisplay.timerBar.x = 135; // why do I have to set these?
+			commandDisplay.timerBar.y = 292;
+
+			// Wiring
+			commandBuffer.events.onStringEnd.add(robot.processCommandString, robot);
+			commandBuffer.events.onStringStart.add(commandDisplay.onStringStart, commandDisplay);
+			commandBuffer.events.onCommand.add(commandDisplay.onCommand, commandDisplay);
+			commandBuffer.events.onStringEnd.add(commandDisplay.onStringEnd, commandDisplay);
+			commandBuffer.events.onTimerChanged.add(commandDisplay.onTimerChanged, commandDisplay);
 		},
 
 		update: function() {

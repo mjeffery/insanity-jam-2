@@ -124,6 +124,15 @@
 					this.timerChanged();
 				}
 			}
+		},
+
+		commandsToKeyCodes: {
+			get: function() {
+				return _.chain(this.keys)
+						.mapValues('command')
+						.invert()
+						.value();
+			}
 		}
 
 	})
