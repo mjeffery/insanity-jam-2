@@ -1,0 +1,92 @@
+{"frames": [
+
+{
+	"filename": "idle__000.png",
+	"frame": {"x":587,"y":2,"w":193,"h":341},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":193,"h":341},
+	"sourceSize": {"w":193,"h":341}
+},
+{
+	"filename": "idle__001.png",
+	"frame": {"x":392,"y":2,"w":193,"h":341},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":193,"h":341},
+	"sourceSize": {"w":193,"h":341}
+},
+{
+	"filename": "idle__002.png",
+	"frame": {"x":197,"y":345,"w":193,"h":341},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":193,"h":341},
+	"sourceSize": {"w":193,"h":341}
+},
+{
+	"filename": "idle__003.png",
+	"frame": {"x":197,"y":2,"w":193,"h":341},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":193,"h":341},
+	"sourceSize": {"w":193,"h":341}
+},
+{
+	"filename": "idle__004.png",
+	"frame": {"x":2,"y":345,"w":193,"h":341},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":193,"h":341},
+	"sourceSize": {"w":193,"h":341}
+},
+{
+	"filename": "idle__005.png",
+	"frame": {"x":2,"y":2,"w":193,"h":341},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":193,"h":341},
+	"sourceSize": {"w":193,"h":341}
+},
+{
+	"filename": "idle__006.png",
+	"frame": {"x":2,"y":345,"w":193,"h":341},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":193,"h":341},
+	"sourceSize": {"w":193,"h":341}
+},
+{
+	"filename": "idle__007.png",
+	"frame": {"x":197,"y":2,"w":193,"h":341},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":193,"h":341},
+	"sourceSize": {"w":193,"h":341}
+},
+{
+	"filename": "idle__008.png",
+	"frame": {"x":197,"y":345,"w":193,"h":341},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":193,"h":341},
+	"sourceSize": {"w":193,"h":341}
+},
+{
+	"filename": "idle__009.png",
+	"frame": {"x":392,"y":2,"w":193,"h":341},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":193,"h":341},
+	"sourceSize": {"w":193,"h":341}
+}],
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker ",
+	"version": "1.0",
+	"image": "robot idle.png",
+	"format": "RGBA8888",
+	"size": {"w":1024,"h":1024},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:94b4dade89353319d0ebef97365a209b:5dc62f59d50a5a693a09347e582f00ef:c34b16986c8078169fb1c7fb4e54a4ec$"
+}
+}

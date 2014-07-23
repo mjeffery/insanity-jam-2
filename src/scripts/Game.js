@@ -18,9 +18,12 @@
 
 			var worldCollisionGroup = physics.p2.createCollisionGroup();
 
-			var robot = this.robot = new Robot(this.game, worldCollisionGroup, debugBodies);
-
 			var ground = add.tileSprite(400, 568, 800, 64, 'dirt', 0);
+
+			var robot = this.robot = new Robot(this.game, worldCollisionGroup, debugBodies);
+			
+			var enemy = this.enemy = add.existing(new Enemy(this.game, 550, 350));
+
 			physics.p2.enable(ground, debugBodies);
 			ground.body.setRectangleFromSprite(ground);
 			ground.body.static = true;
@@ -39,6 +42,9 @@
 			//add.bitmapText(130, 40, 'minecraftia', 'Press "RIGHT" to punch and "LEFT" to defend!', 16);
 			
 			new Instructions(this.game);
+		
+			add.existing(new HealthBar(this.game, 20, 20, 'player'));
+			add.existing(new HealthBar(this.game, 440, 20, 'enemy'));
 
 			var commandBuffer = this.commandBuffer = new CommandBuffer(this.game);
 			var commandKeyPool = this.commandKeyPool = new CommandKeyPool(this.game);

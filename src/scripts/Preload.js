@@ -21,6 +21,8 @@
 			TimerBar.preload(load);
 			CommandDisplay.preload(load);
 			Instructions.preload(load);
+			HealthBar.preload(load);
+			Enemy.preload(load);
 
 			load.onLoadComplete.addOnce(this.onLoadComplete, this);					
 		},
