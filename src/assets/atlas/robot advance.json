@@ -1,0 +1,60 @@
+{"frames": [
+
+{
+	"filename": "advance__000.png",
+	"frame": {"x":282,"y":358,"w":278,"h":382},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":278,"h":382},
+	"sourceSize": {"w":278,"h":382}
+},
+{
+	"filename": "advance__001.png",
+	"frame": {"x":2,"y":386,"w":278,"h":382},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":278,"h":382},
+	"sourceSize": {"w":278,"h":382}
+},
+{
+	"filename": "advance__002.png",
+	"frame": {"x":2,"y":2,"w":278,"h":382},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":278,"h":382},
+	"sourceSize": {"w":278,"h":382}
+},
+{
+	"filename": "advance__003.png",
+	"frame": {"x":562,"y":358,"w":310,"h":354},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":310,"h":354},
+	"sourceSize": {"w":310,"h":354}
+},
+{
+	"filename": "advance__004.png",
+	"frame": {"x":594,"y":2,"w":310,"h":354},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":310,"h":354},
+	"sourceSize": {"w":310,"h":354}
+},
+{
+	"filename": "advance__005.png",
+	"frame": {"x":282,"y":2,"w":310,"h":354},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":310,"h":354},
+	"sourceSize": {"w":310,"h":354}
+}],
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker ",
+	"version": "1.0",
+	"image": "robot advance.png",
+	"format": "RGBA8888",
+	"size": {"w":1024,"h":1024},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:6b8788caa3b6a2c241a9c638b15da955:5337fcd7a12ad44d8cf9e4dbb95e25db:3f4a26293c04a206ca7deeea84dc1a64$"
+}
+}

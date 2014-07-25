@@ -1,0 +1,1 @@
+idle: 200ms (~10 frames)  scale 75%  pack-- remember to select "no trim"

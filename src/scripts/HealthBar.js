@@ -1,6 +1,7 @@
 (function(exports) {
 	function HealthBar(game, x, y, team) {
 		Phaser.Sprite.call(this, game, x, y, 'hp-guages', 'guage-bg');
+		this.fixedToCamera = true;
 
 		var guage = this._guage = game.make.sprite(0, 1, 'hp-guages', team + '-hp-guage');
 		var overlay = game.make.sprite(-3, -3, 'hp-guages', team + '-hp-guage-overlay');

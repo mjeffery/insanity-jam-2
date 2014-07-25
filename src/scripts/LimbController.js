@@ -8,11 +8,13 @@
 				options: _.defaults(torsoOptions || {}, {
 					extended: {
 						limit: -Math.PI / 8,
-						motorDir: 1
+						motorDir: 1,
+						scale: 1
 					},
 					retracted: {
 						limit: 3 * Math.PI / 4,
-						motorDir: -1
+						motorDir: -1,
+						scale: 1
 					}
 				})
 			},
@@ -21,11 +23,13 @@
 				options: _.defaults(limbOptions || {}, {
 					extended: {
 						limit: -Math.PI / 8,
-						motorDir: 1
+						motorDir: 1,
+						scale: 1
 					},
 					retracted: {
 						limit: 3 * Math.PI / 4,
-						motorDir: -1
+						motorDir: -1,
+						scale: 1
 					}
 				})
 			}

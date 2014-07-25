@@ -1,7 +1,7 @@
 (function(exports) {
 
 	function CommandDisplay(game, commandKeyPool, commandsToKeyCodes) {
-		Phaser.Group.call(this, game, undefined, true);	
+		Phaser.Group.call(this, game);	
 		
 		_.extend(this, {
 			commandKeyPool: commandKeyPool,
