@@ -1,10 +1,6 @@
 (function(exports) {
 	function Game() {}
 
-	Game.preload = function(load) {
-		load.image('dirt', 'assets/img/dirt.png');
-	};
-
 	Game.prototype = {
 		create: function() {
 			var physics = this.game.physics,
@@ -31,32 +27,14 @@
 				}
 			};
 
-			var ground = add.tileSprite(this.world.bounds.centerX, 568, this.world.bounds.width, 64, 'dirt', 0);
+			var ground = this.ground = add.existing(new Ground(this.game, collisionGroups, 568));
 
 			var robot = this.robot = new Robot(this.game, collisionGroups, 200, 300, debugBodies);
 			
 			var enemy = this.enemy = add.existing(new Enemy(this.game, collisionGroups, 600, 350));
 
-			physics.p2.enable(ground, debugBodies);
-			ground.body.setRectangleFromSprite(ground);
-			ground.body.static = true;
-			ground.body.setCollisionGroup(collisionGroups.world);
-			ground.body.collides(collisionGroups.player.body);
-
-
 			var dolly = this.dolly = add.existing(new FightCamera(this.game, 400, 300, [robot.torso, enemy]));
 			this.camera.follow(dolly);
-			
-			/*
-			var keys = this.input.keyboard.createCursorKeys();
-			keys.down.onDown.add(robot.squat, robot);
-			keys.up.onDown.add(robot.jump, robot);
-			keys.left.onDown.add(robot.defend, robot);
-			keys.right.onDown.add(robot.punch, robot);
-			*/
-
-			//add.bitmapText(150, 20, 'minecraftia', 'Press "DOWN" to squat and "UP" to jump!', 16);
-			//add.bitmapText(130, 40, 'minecraftia', 'Press "RIGHT" to punch and "LEFT" to defend!', 16);
 			
 			//new Instructions(this.game);
 		
@@ -87,12 +65,15 @@
 		update: function() {
 			this.commandBuffer.update();
 
+			// resolve damage for robot punches and kicks
 			_.forEach(this.robot.damageSources, function(damage) {
 				var velocity = damage.calculateVelocity();
 				if(velocity > 600 && SAT.circleVsRect(damage.circle, this.enemy.victim.rect)) {
 					console.log(velocity);
 				}
 			}, this);
+
+			this.game.physics.arcade.collide(this.enemy, this.ground.arcade, undefined, this.enemy.onCollision, this.enemy);
 		},
 
 		render: function() {
@@ -104,7 +85,8 @@
 			this.game.debug.geom(this.dolly.target);
 			*/
 
-			this.game.debug.geom(this.enemy.victim.rect);
+			//this.game.debug.geom(this.enemy.victim.rect);
+			this.game.debug.body(this.enemy);
 		}
 	};
 

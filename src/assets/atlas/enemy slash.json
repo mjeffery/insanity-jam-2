@@ -1,0 +1,76 @@
+{"frames": [
+
+{
+	"filename": "slash__000.png",
+	"frame": {"x":451,"y":1247,"w":447,"h":413},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":447,"h":413},
+	"sourceSize": {"w":447,"h":413}
+},
+{
+	"filename": "slash__001.png",
+	"frame": {"x":2,"y":1247,"w":447,"h":413},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":447,"h":413},
+	"sourceSize": {"w":447,"h":413}
+},
+{
+	"filename": "slash__002.png",
+	"frame": {"x":451,"y":832,"w":447,"h":413},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":447,"h":413},
+	"sourceSize": {"w":447,"h":413}
+},
+{
+	"filename": "slash__003.png",
+	"frame": {"x":2,"y":832,"w":447,"h":413},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":447,"h":413},
+	"sourceSize": {"w":447,"h":413}
+},
+{
+	"filename": "slash__004.png",
+	"frame": {"x":451,"y":417,"w":447,"h":413},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":447,"h":413},
+	"sourceSize": {"w":447,"h":413}
+},
+{
+	"filename": "slash__005.png",
+	"frame": {"x":2,"y":417,"w":447,"h":413},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":447,"h":413},
+	"sourceSize": {"w":447,"h":413}
+},
+{
+	"filename": "slash__006.png",
+	"frame": {"x":451,"y":2,"w":447,"h":413},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":447,"h":413},
+	"sourceSize": {"w":447,"h":413}
+},
+{
+	"filename": "slash__007.png",
+	"frame": {"x":2,"y":2,"w":447,"h":413},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":447,"h":413},
+	"sourceSize": {"w":447,"h":413}
+}],
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker ",
+	"version": "1.0",
+	"image": "enemy slash.png",
+	"format": "RGBA8888",
+	"size": {"w":1024,"h":2048},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:076633a722de4536755df4e96fa724e6:fd5327b27cbc7e122fdc51ce0fd848bb:7898d47ee36d3015a8a4ba8bab7d2c64$"
+}
+}

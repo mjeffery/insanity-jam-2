@@ -1,0 +1,14 @@
+[h]Update: Almost a game...[/h]
+
+"Proletariat Punch" is almost a real game now.   I would have liked to been polishing already, but sometimes life gets in the way  (I probably also spent to much time playing around with / learning the new tools).    The two fighters "hit" each other with attacks from very different physics universes and it took a little bit of doing to get them talking to each other and feeling passable.  When the player takes a hit it should result in hilarious ragdoll shenanigans.  When the opponent takes a hit, it should get knocked around with the choppy canned responses of a retro fighter. 
+
+I need to get my interactions and some rudimentary AI implemented ASAP so I can move on to cleaning some of the other stuff up.  Its very difficult to make player robot do anything but bounce into the air and flail-- so advancing or retreating from the opponent is hardly an option right now.  I might add in a "lean" function with 'G' and 'H' so there's a way to apply some general forward/backward force to robot.  I think it would be too hard to make an AI that isn't trivial or unbeatable if it has to work around the player's horizontal immobility.
+
+[b]The short list:[/b]
+[list]
+[*][del]Redo player robot to make it smaller, possibly more attractive[/del][/*]
+[*][del]bridge P2 & Arcade physics so enemy can detect "hits" from the player[/del][/*]
+[*]enemy attacks & animations[/*]
+[*]damage & win/loss states[/*]
+[*]Opponent's AI[/*]
+[/list]
