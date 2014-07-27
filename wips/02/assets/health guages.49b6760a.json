@@ -1,0 +1,52 @@
+{"frames": {
+
+"enemy-hp-guage-overlay":
+{
+	"frame": {"x":2,"y":53,"w":346,"h":49},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":346,"h":49},
+	"sourceSize": {"w":346,"h":49}
+},
+"enemy-hp-guage":
+{
+	"frame": {"x":2,"y":174,"w":336,"h":30},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":336,"h":30},
+	"sourceSize": {"w":336,"h":30}
+},
+"guage-bg":
+{
+	"frame": {"x":2,"y":104,"w":338,"h":36},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":338,"h":36},
+	"sourceSize": {"w":338,"h":36}
+},
+"player-hp-guage-overlay":
+{
+	"frame": {"x":2,"y":2,"w":346,"h":49},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":346,"h":49},
+	"sourceSize": {"w":346,"h":49}
+},
+"player-hp-guage":
+{
+	"frame": {"x":2,"y":142,"w":336,"h":30},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":336,"h":30},
+	"sourceSize": {"w":336,"h":30}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker ",
+	"version": "1.0",
+	"image": "health guages.png",
+	"format": "RGBA8888",
+	"size": {"w":512,"h":256},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:4680727ae5c547c73f58723df3c806cf:98f432e4b87f633543ebaf962a085870:f23f692307901f59a773f4e8cbceacd6$"
+}
+}

@@ -1,0 +1,15 @@
+#game-container {
+	width: 800px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 40px;
+}
+
+h1 {
+	text-align: center;
+	margin-bottom: 0px;
+}
+
+h2 {
+	text-align: center;
+}
