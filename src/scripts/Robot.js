@@ -8,6 +8,8 @@
 
 		this.collisionGroups = collisionGroups;	
 
+		this._parts = [];
+
 		var left = this.left = {}, 
 			right = this.right = {};
 
@@ -17,10 +19,13 @@
 
 		this._temp = {
 			circle: { x:0, y:0, radius:0 },
-			rect: new Phaser.Rectangle()
+			rect: new Phaser.Rectangle(),
+			accumulator: {
+				min: { x: 0, y: 0 },
+				max: { x: 0, y: 0 }
+			}
 		};
 		
-
 		left.thigh = this.addPart(305, 331, 'robot left thigh');
 		right.thigh = this.addPart(348, 332, 'robot right thigh');
 
@@ -134,6 +139,8 @@
 			part.body.setCollisionGroup(this.collisionGroups.player.body);
 			part.body.collides(this.collisionGroups.world);
 
+			this._parts.push(part);
+
 			return part;
 		},
 
@@ -142,7 +149,7 @@
 				y = bodyPart.y + position[1],
 				dmg = this.game.add.existing(new PlayerDamage(this.game, x, y, radius));
 			
-			this.game.physics.p2.enable(dmg, true);
+			this.game.physics.p2.enable(dmg, false);
 			dmg.body.clearShapes();
 			dmg.body.addCircle(radius);
 			dmg.body.mass = 0.01;
@@ -185,15 +192,47 @@
 					action = (_.contains(command, 'extend')) ? 'extend' : 'retract';
 
 					controller[action](scale[timesPressed - 1] || 18);
-				});
-		},
-
-		
-
-		destroy: function() {
-			
+				})
 		}
 	};
+
+	var tmpRect = new Phaser.Rectangle();
+
+	Object.defineProperties(Robot.prototype, {
+		cameraRect: {
+			get: function() {
+				var minx, miny, max, maxy;
+
+				_.chain(this._parts)
+			     .map(function(part) {
+					 return part.getBounds();
+				 })
+				 .forEach(function(bounds, index) {
+					 if(index == 0) {
+					 	minx = bounds.left;
+						miny = bounds.top;
+						maxx = bounds.right;
+						maxy = bounds.bottom;
+					 }
+					 else {
+						minx = Math.min(minx, bounds.left);
+						miny = Math.min(miny, bounds.top);
+						maxx = Math.max(maxx, bounds.right);
+						maxy = Math.max(maxy, bounds.bottom);
+					 }
+
+				 });
+				
+				 tmpRect.setTo(minx, miny, maxx - minx, maxy - miny);
+				 tmpRect.x += this.game.camera.x;
+				 tmpRect.y += this.game.camera.y;
+
+				 return tmpRect;
+			}
+		}	
+	});
+
+	//////////////////////////////////////////////////////////////////////////////////////////
 
 	function PlayerDamage(game, x, y, radius) {
 		Phaser.Sprite.call(this, game, x, y);

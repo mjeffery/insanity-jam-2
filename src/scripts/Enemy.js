@@ -11,12 +11,16 @@
 		this.addChild(victim);
 
 		_.extend(this.events, {
-			onDamage: new Phaser.Signal()
+			onDamage: new Phaser.Signal(),
+			onCommandPause: new Phaser.Signal(),		// fires when the enemy cannot receive commands 
+			onCommandResume: new Phaser.Signal(),		// fires when the enemy can receive commands
 		});
 
+		this._startY = y;
 		this._facing = Phaser.LEFT;
 		this._state = 'none';
 		this._touchedGround = false;
+		this._acceptCommands = true;
 
 		this.idle();
 
@@ -50,11 +54,15 @@
 			TurnThreshold: 20
 		},
 		WakeUp: {
-			Time: 1	
+			Time: 1.5	
 		},
+		StandUp: {
+			Time: 500 
+		},
+		
 		preload: function(load) {
 			load.atlasJSONArray('enemy-atlas', 'assets/atlas/enemy.png', 'assets/atlas/enemy.json');
-			load.atlasJSONArray('enemy-extra-atlas', 'assets/atlas/enemy slash.png', 'assets/atlas/enemy slash.json');
+			load.atlasJSONArray('enemy-extra-atlas', 'assets/atlas/enemy extra.png', 'assets/atlas/enemy extra.json');
 		}
 	});
 
@@ -68,7 +76,7 @@
 				case 'knocked back':
 					if(this.body.velocity.y > -Enemy.Knockback.TurnThreshold) {
 						this.animations.play('fall-back');
-						this.body.setSize(284, 42, 0, 40);
+						this.body.setSize(284, 42, 0, 30);
 						this.body.bounce.setTo(0.3, 0.3);
 
 						this.state = 'falling';
@@ -100,20 +108,24 @@
 			switch(this.state) {
 				case 'idle': return;
 				case 'none':
+				case 'standing':
 					this.doIdle();
 					break;
 
 				case 'advancing':
+					this.acceptCommands = false;
 					this.animations.play('stop-advance')
 						.onComplete.addOnce(function() {
-							//TODO what about the transition state?
+							this.acceptCommands = true;
 							this.doIdle();
 						}, this);
 					break;
 
 				case 'retreating':
+					this.acceptCommands = false;
 					this.animations.play('stop-retreat')
 						.onComplete.addOnce(function() {
+							this.acceptCommands = true;
 							this.doIdle();
 						}, this);
 			}
@@ -129,8 +141,10 @@
 					break;
 
 				case 'retreating':
+					this.acceptCommands = false;
 					this.animations.play('stop-retreat')
 						.onComplete.addOnce(function() {
+							this.acceptCommands = true;
 							this.doAdvance(speed);
 						}, this);
 
@@ -148,8 +162,10 @@
 					break;
 
 				case 'advancing':
+					this.acceptCommands = false;
 					this.animations.play('stop-advance')
 						.onComplete.addOnce(function() {
+							this.acceptsCommands = true;
 							this.doRetreat(speed);
 						}, this);
 
@@ -159,6 +175,7 @@
 		},
 
 		knockback: function(velx, vely) {
+			this.acceptCommands = false;
 			this.switchToMainAtlas();
 			this.setFacing(-velx);
 			this.animations.play('knocked-up');
@@ -178,10 +195,18 @@
 		stand: function() {
 			if(this.state != 'waking up') return;
 
+			this.body.velocity.setTo(0, 0);
+			this.body.acceleration.y = 0;
+
+			this.game.add.tween(this)
+				.to({ y: this._startY }, Enemy.StandUp.Time)
+				.start();
+
 			this.switchToExtraAtlas();
 			this.animations.play('stand')
 				.onComplete.addOnce(function(){
-					this.body.setSize(73, 256);
+					this.acceptsCommands = true;
+					this.body.setSize(73, 256, 0, 0);
 					this.idle();
 				}, this);
 
@@ -263,9 +288,11 @@
 			this.anchor.setTo(0.5, 0.5);
 
 			this.animations.add('slash', Phaser.Animation.generateFrameNames('slash__', 0, 7, '.png', 3), 5);
-			this.animations.add('stand', Phaser.Animation.generateFrameNames('stand__', 0, 7, '.png', 3), 5);
+			this.animations.add('stand', Phaser.Animation.generateFrameNames('stand__', 0, 7, '.png', 3), 10);
 		}
 	});
+
+	var tmpRect = new Phaser.Rectangle();
 
 	Object.defineProperties(Enemy.prototype, {
 		state: {
@@ -275,6 +302,31 @@
 			set: function(val) {
 				this.prevState = this._state;
 				this._state = val;
+			}
+		},
+		acceptCommands: {
+			get: function() {
+				return this._acceptCommands;
+			},
+			set: function(val) {
+				if(val != this._acceptCommands) {
+					if(val) 
+						this.events.onCommandResume.dispatch(this);
+					else
+						this.events.onCommandPause.dispatch(this);
+					this._acceptCommands = val;
+				}
+			}
+		},
+		cameraRect: {
+			get: function() {
+				var rect = this.getBounds();
+
+				tmpRect.copyFrom(rect);
+				tmpRect.x += this.game.camera.x;
+				tmpRect.y += this.game.camera.y;
+
+				return tmpRect;
 			}
 		}
 	});

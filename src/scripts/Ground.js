@@ -8,7 +8,7 @@
 		this.body.setCollisionGroup(collisionGroups.world);
 		this.body.collides(collisionGroups.player.body);
 
-		var arcade = this.arcade = game.make.sprite(0, y - 32);
+		var arcade = this.arcade = game.make.sprite(game.world.bounds.left, y - 32);
 
 		game.physics.arcade.enable(arcade);
 		arcade.body.setSize(game.world.bounds.width, 64);

@@ -1,4 +1,8 @@
 (function(exports) {
+
+	var tmp = new Phaser.Point();
+	var vel = new Phaser.Point();
+
 	function FightCamera(game, x, y, fighters) {
 		Phaser.Sprite.call(this, game, x, y);
 		this.anchor.setTo(0.5,0.5);
@@ -11,6 +15,9 @@
 			return new Phaser.Rectangle(f.x - w/2, f.y - h/2, w, h);
 		}, this);
 
+		game.physics.arcade.enable(this);
+
+
 		this.target = new Phaser.Rectangle(x, y, 800, 600);
 	}
 
@@ -19,7 +26,11 @@
 			Width: 200,
 			Height: 400,
 			Padding: 25
-		}	
+		},
+		Spring: {
+			Stiffness: 100,
+			Damping: 50
+		}
 	});
 
 	FightCamera.prototype = Object.create(Phaser.Sprite.prototype);
@@ -34,37 +45,40 @@
 			target.x = target.y = 0;
 
 			for(var i = 0; i < fighters.length; i++) {
-				rects[i].x = fighters[i].x - FightCamera.Bounds.Width / 2;
-				rects[i].y = fighters[i].y - FightCamera.Bounds.Height / 2;
-
-				target.x += fighters[i].x;
-				target.y += fighters[i].y;
+				rects[i].copyFrom(fighters[i].cameraRect);
+				
+				target.x += rects[i].centerX;
+				target.y += rects[i].centerY;
 			}
 
 			target.x = (target.x / fighters.length) - 400;
 			target.y = (target.y / fighters.length) - 300;
 			
-			var left = rects[0].x - FightCamera.Bounds.Padding;
-			var right = rects[0].right + FightCamera.Bounds.Padding;
-			var top = rects[0].y - FightCamera.Bounds.Padding;
-			var bottom = rects[0].bottom + FightCamera.Bounds.Padding;
+			first = rects[0];
 
-			if(target.left > left) {
-				target.x = left;
+			if(target.left > first.left) {
+				target.x = first.left;
 			}
-			else if(target.right < right) {
-				target.x = right - 800;
+			else if(target.right < first.right) {
+				target.x = first.right - 800;
 			}
 
-			if(target.top > top) {
-				target.y = top;
+			if(target.top > first.top) {
+				target.y = first.top;
 			}
-			else if(target.bottom < bottom) {
-				target.y = bottom - 600;
+			else if(target.bottom < first.bottom) {
+				target.y = first.bottom - 600;
 			}
 
-			this.x = target.x + 400;
-			this.y = target.y + 300;
+			// do a spring calculation
+			tmp.setTo(target.centerX, target.centerY);
+			Phaser.Point.subtract(tmp, this.body.position, tmp);
+			tmp.multiply(FightCamera.Spring.Stiffness, FightCamera.Spring.Stiffness);
+
+			vel.copyFrom(this.body.velocity);
+			vel.multiply(FightCamera.Spring.Damping, FightCamera.Spring.Damping);
+
+			Phaser.Point.subtract(tmp, vel, this.body.acceleration);
 		}
 	});
 

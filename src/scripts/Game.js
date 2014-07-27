@@ -33,8 +33,10 @@
 			
 			var enemy = this.enemy = add.existing(new Enemy(this.game, collisionGroups, 600, 350));
 
-			var dolly = this.dolly = add.existing(new FightCamera(this.game, 400, 300, [robot.torso, enemy]));
+			var dolly = this.dolly = add.existing(new FightCamera(this.game, 400, 300, [robot, enemy]));
 			this.camera.follow(dolly);
+
+			var controller = this.enemyController = new EnemyController(robot, enemy);
 			
 			//new Instructions(this.game);
 		
@@ -60,10 +62,16 @@
 			commandBuffer.events.onCommand.add(commandDisplay.onCommand, commandDisplay);
 			commandBuffer.events.onStringEnd.add(commandDisplay.onStringEnd, commandDisplay);
 			commandBuffer.events.onTimerChanged.add(commandDisplay.onTimerChanged, commandDisplay);
+
+
+
+			enemy.events.onCommandPause.add(function() { console.log('commands paused')});
+			enemy.events.onCommandResume.add(function() { console.log('commands resumed')});
 		},
 
 		update: function() {
 			this.commandBuffer.update();
+			this.enemyController.update();
 
 			// resolve damage for robot punches and kicks
 			_.forEach(this.robot.damageSources, function(damage) {
@@ -82,11 +90,12 @@
 			_.forEach(this.dolly.rects, function(rect) {
 				this.game.debug.geom(rect);
 			}, this.dolly);
-			this.game.debug.geom(this.dolly.target);
 			*/
+			//this.game.debug.geom(this.dolly.target);
 
 			//this.game.debug.geom(this.enemy.victim.rect);
-			this.game.debug.body(this.enemy);
+			//this.game.debug.body(this.enemy);
+			//this.game.debug.body(this.ground.arcade);
 		}
 	};
 

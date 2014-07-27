@@ -6,8 +6,7 @@
   "repository": "",
   "private": true,
   "dependencies": {
-	"phaser-official": "latest",
-	"lodash": "latest"
+    "phaser-official": "2.0.7",
+    "lodash": "latest"
   }
 }
-
