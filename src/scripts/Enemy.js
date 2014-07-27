@@ -59,6 +59,14 @@
 		StandUp: {
 			Time: 500 
 		},
+		Distance: {
+			Far: 700,
+			Mid: 300,
+			Near: 150 
+		},
+		Move: {
+			Speed: 150
+		},
 		
 		preload: function(load) {
 			load.atlasJSONArray('enemy-atlas', 'assets/atlas/enemy.png', 'assets/atlas/enemy.json');

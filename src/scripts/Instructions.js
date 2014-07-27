@@ -17,6 +17,10 @@
 		this.currentPage = 0;
 		pages[0].visible = true;
 
+		_.extend(this.events, {
+			onComplete: new Phaser.Signal()
+		})
+
 		var advanceKey = this.advanceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 		advanceKey.onDown.add(this.advance, this);
 	}

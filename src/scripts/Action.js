@@ -24,7 +24,11 @@
 		},
 
 		start: function() { },
-		think: function() { }
+		think: function() { },
+
+		complete: function() {
+			this.events.onComplete.dispatch(this);
+		}
 	}
 
 	exports.Action = Action;

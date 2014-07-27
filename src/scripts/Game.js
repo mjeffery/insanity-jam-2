@@ -36,8 +36,8 @@
 			var dolly = this.dolly = add.existing(new FightCamera(this.game, 400, 300, [robot, enemy]));
 			this.camera.follow(dolly);
 
-			var controller = this.enemyController = new EnemyController(robot, enemy);
-			
+			var controller = this.enemyController = new EnemyController(robot, enemy, this.game.rnd);
+			controller.onMatchStart();
 			//new Instructions(this.game);
 		
 			add.existing(new HealthBar(this.game, 20, 20, 'player'));

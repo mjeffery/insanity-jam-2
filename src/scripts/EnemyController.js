@@ -1,16 +1,32 @@
 (function(exports) {
-	function EnemyController(player, enemy) {
+	function EnemyController(player, enemy, rnd) {
 		this.acceptsCommands = true;
 		this.thinking = false;
 
 		this.enemy = enemy;
 		this.player = player;
 		this.sensor = new PlayerSensor(player);
-
+		this.rnd = rnd;
 		this.actionQueue = [];
 	}
 
 	EnemyController.prototype = {
+		weightedSelect: function(weights, choices) {
+			var sum = _.reduce(weights, function(a,b) { return a + b }),
+				pick = this.rnd.integerInRange(0, sum),
+				val = 0, i = 0;
+
+			while(val < sum) {
+				val += weights[i];
+				if(val > pick) 
+					return choices[i];
+
+				i++;
+			}
+
+			return choices[choices.length - 1];
+		},
+
 		update: function() {
 			this.sensor.update();		
 			if(this.actionQueue.length > 0) {
@@ -20,18 +36,29 @@
 		},
 
 		chooseNextAction: function() {
-			this.actionQueue.push(new GoNearAction(this.enemy, this.sensor));
+			var choice = this.weightedSelect([2, 3, 2, 1], ['near', 'mid', 'far', 'pause']);
+			this.pushAction(choice);
 		},
 
-		pushAction: function(action) {
+		pushAction: function(choice) {
+			var action = this.createAction(choice);
 			this.actionQueue.push(action);
-			action.events.onComplete.addOnce(onActionComplete, this);
+			action.events.onComplete.addOnce(this.onActionComplete, this);
+		},
+
+		createAction: function(name) {
+			switch(name) {
+				case 'near': return new GoNearAction(this.enemy, this.sensor);
+				case 'mid': return new GoMidAction(this.enemy, this.sensor);
+				case 'far': return new GoFarAction(this.enemy, this.sensor);
+				case 'pause': return new WaitAction(this.enemy, 0.3);
+			}
 		},
 
 		onActionComplete: function() {
-			this.actionQueue.shift();
+			this.prevAction = this.actionQueue.shift();
 			if(this.actionQueue.length === 0) {
-				
+				this.chooseNextAction();	
 			}
 		},
 
