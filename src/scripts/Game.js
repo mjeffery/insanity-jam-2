@@ -40,8 +40,10 @@
 			controller.onMatchStart();
 			//new Instructions(this.game);
 		
-			add.existing(new HealthBar(this.game, 20, 20, 'player'));
-			add.existing(new HealthBar(this.game, 440, 20, 'enemy'));
+			var playerHp = add.existing(new HealthBar(this.game, 20, 20, 'player'));
+
+			var enemyHp = add.existing(new HealthBar(this.game, 440, 20, 'enemy'));
+			enemy.events.onDamage.add(enemyHp.onDamage, enemyHp);
 
 			var commandBuffer = this.commandBuffer = new CommandBuffer(this.game);
 			var commandKeyPool = this.commandKeyPool = new CommandKeyPool(this.game);
@@ -63,8 +65,6 @@
 			commandBuffer.events.onStringEnd.add(commandDisplay.onStringEnd, commandDisplay);
 			commandBuffer.events.onTimerChanged.add(commandDisplay.onTimerChanged, commandDisplay);
 
-
-
 			enemy.events.onCommandPause.add(function() { console.log('commands paused')});
 			enemy.events.onCommandResume.add(function() { console.log('commands resumed')});
 		},
@@ -77,7 +77,8 @@
 			_.forEach(this.robot.damageSources, function(damage) {
 				var velocity = damage.calculateVelocity();
 				if(velocity > 600 && SAT.circleVsRect(damage.circle, this.enemy.victim.rect)) {
-					console.log(velocity);
+					var side  = (this.robot.torso.x < this.enemy.x) ? Phaser.LEFT : Phaser.RIGHT;
+					this.enemy.takeDamage(side, damage.circle, velocity);
 				}
 			}, this);
 

@@ -8,6 +8,10 @@
 		this.sensor = new PlayerSensor(player);
 		this.rnd = rnd;
 		this.actionQueue = [];
+
+		enemy.events.onDamage.add(this.onDamage, this);
+		enemy.events.onCommandPause.add(this.onCommandPause, this);
+		enemy.events.onCommandResume.add(this.onCommandResume, this);
 	}
 
 	EnemyController.prototype = {
@@ -36,14 +40,19 @@
 		},
 
 		chooseNextAction: function() {
-			var choice = this.weightedSelect([2, 3, 2, 1], ['near', 'mid', 'far', 'pause']);
-			this.pushAction(choice);
+			var choice = this.weightedSelect([6, 3, 2, 1], [['near', 'pause'], 'mid', 'far', 'pause']);
+			this.do(choice);
 		},
 
-		pushAction: function(choice) {
-			var action = this.createAction(choice);
-			this.actionQueue.push(action);
-			action.events.onComplete.addOnce(this.onActionComplete, this);
+		do: function(choice) {
+			if(_.isArray(choice)) {
+				_.forEach(choice, this.do, this);
+			}
+			else {
+				var action = this.createAction(choice);
+				this.actionQueue.push(action);
+				action.events.onComplete.addOnce(this.onActionComplete, this);
+			}
 		},
 
 		createAction: function(name) {
@@ -66,6 +75,10 @@
 			this.chooseNextAction();
 		},
 
+		onDamage: function() {
+			this.actionQueue.length = 0;
+		},
+
 		onCommandPause: function() {
 			this.acceptsCommands = false;
 		},
@@ -74,7 +87,7 @@
 			this.acceptsCommands = true;
 
 			if(this.actionQueue.length === 0) 
-				chooseNextAction();
+				this.chooseNextAction();
 		}
 	};
 

@@ -19,7 +19,7 @@
 			var agent = this.agent,
 				sensor = this.sensor;
 
-			if(sensor.left + Enemy.Distance.Far < agent.x) {
+			if(Math.abs(sensor.left - agent.x) > Enemy.Distance.Far) {
 				this.events.onComplete.dispatch(this);
 			}
 		}

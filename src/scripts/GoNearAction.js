@@ -19,9 +19,8 @@
 			var agent = this.agent,
 				sensor = this.sensor;
 
-			if(sensor.right + Enemy.Distance.Near > agent.x) {
-				agent.idle();
-				this.events.onComplete.dispatch(this);
+			if(Math.abs(sensor.right - agent.x) < Enemy.Distance.Near) {
+				this.complete();
 			}
 		}
 	});

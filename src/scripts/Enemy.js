@@ -21,37 +21,22 @@
 		this._state = 'none';
 		this._touchedGround = false;
 		this._acceptCommands = true;
+		this._vulnerable = true;
+
+		this._hp = 100;
+		this._maxHp = 100;
 
 		this.idle();
-
-		var isLeft = true;
-		game.input.keyboard.addKey(Phaser.Keyboard.T).onDown.add(function() {
-			switch(this.state) {
-				case 'idle':
-					if(isLeft) {
-						this.advance(-50);
-						isLeft = false;
-					}
-					else {
-						this.retreat(50);
-						isLeft = true;
-					}
-					break;
-				case 'retreating':
-				case 'advancing':
-					this.idle();
-			}
-		}, this);
-
-		game.input.keyboard.addKey(Phaser.Keyboard.U).onDown.add(function() {
-			this.knockback(-200, -300);
-		}, this);
 	}
 
 	_.extend(Enemy, {
 		Knockback: {
 			Gravity: 300,
-			TurnThreshold: 20
+			TurnThreshold: 20,
+			Launch: {
+				X: 200,
+				Y: -300
+			}
 		},
 		WakeUp: {
 			Time: 1.5	
@@ -78,6 +63,22 @@
 	Enemy.prototype.constructor = Enemy;
 
 	_.extend(Enemy.prototype, {
+
+		takeDamage: function(side, origin, speed) {
+			if(!this._vulnerable) return;
+
+			var vx = Enemy.Knockback.Launch.X,
+				vy = Enemy.Knockback.Launch.Y;
+
+			vx = (side === Phaser.LEFT ? vx : -vx);
+
+			this.knockback(vx, vy);
+
+			this._hp -= 10; //TODO calculate damage
+
+			this.events.onDamage.dispatch(this._hp, this._maxHp);
+				
+		},
 
 		update: function() {
 			switch(this.state) {
@@ -121,19 +122,15 @@
 					break;
 
 				case 'advancing':
-					this.acceptCommands = false;
 					this.animations.play('stop-advance')
 						.onComplete.addOnce(function() {
-							this.acceptCommands = true;
 							this.doIdle();
 						}, this);
 					break;
 
 				case 'retreating':
-					this.acceptCommands = false;
 					this.animations.play('stop-retreat')
 						.onComplete.addOnce(function() {
-							this.acceptCommands = true;
 							this.doIdle();
 						}, this);
 			}
@@ -149,10 +146,8 @@
 					break;
 
 				case 'retreating':
-					this.acceptCommands = false;
 					this.animations.play('stop-retreat')
 						.onComplete.addOnce(function() {
-							this.acceptCommands = true;
 							this.doAdvance(speed);
 						}, this);
 
@@ -170,10 +165,8 @@
 					break;
 
 				case 'advancing':
-					this.acceptCommands = false;
 					this.animations.play('stop-advance')
 						.onComplete.addOnce(function() {
-							this.acceptsCommands = true;
 							this.doRetreat(speed);
 						}, this);
 
@@ -183,6 +176,8 @@
 		},
 
 		knockback: function(velx, vely) {
+			this._vulnerable = false;
+
 			this.acceptCommands = false;
 			this.switchToMainAtlas();
 			this.setFacing(-velx);
@@ -196,6 +191,7 @@
 		},
 
 		wakeUp: function() {
+			this._vulnerable = true;
 			this._wakeUpTimer = 0;
 			this.state = 'waking up';
 		},
@@ -213,7 +209,7 @@
 			this.switchToExtraAtlas();
 			this.animations.play('stand')
 				.onComplete.addOnce(function(){
-					this.acceptsCommands = true;
+					this.acceptCommands = true;
 					this.body.setSize(73, 256, 0, 0);
 					this.idle();
 				}, this);
