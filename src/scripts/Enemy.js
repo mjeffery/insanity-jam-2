@@ -45,12 +45,17 @@
 			Time: 500 
 		},
 		Distance: {
-			Far: 700,
+			Far: 500,
 			Mid: 300,
 			Near: 150 
 		},
 		Move: {
-			Speed: 150
+			Speed: 200,
+			CrossSpeed: 600, 
+			Ascend: {
+				Height: 250,
+				Duration: 750
+			}
 		},
 		
 		preload: function(load) {
@@ -110,7 +115,43 @@
 						this.wakeUp();
 					}
 					break;
+
+				default:
+					if(this._dropping) {
+						this._dropping = false;
+
+						this.body.acceleration.y = 0;
+
+						this.game.add.tween(this)
+							.to({ y: this._startY }, 200)
+							.start(); //TODO magic number
+					}
 			}
+		},
+
+
+		punch: function() {
+			switch(this.state) {
+				case 'none':
+				case 'idle':
+					break;
+
+				case 'ascending':
+					this.animations.play('start-advance')
+						.onComplete.addOnce(this.doPunch, this);
+					break;
+
+				case 'advancing':
+					this.doPunch();
+					break;
+
+				case 'retreating':
+					this.stopRetreat(function() {
+							this.animations.play('start-advance')
+								.onComplete(this.doPunch, this);
+						}, this);
+					break;
+			}	
 		},
 
 		idle: function() {
@@ -118,21 +159,16 @@
 				case 'idle': return;
 				case 'none':
 				case 'standing':
+				case 'ascending':
 					this.doIdle();
 					break;
 
 				case 'advancing':
-					this.animations.play('stop-advance')
-						.onComplete.addOnce(function() {
-							this.doIdle();
-						}, this);
+					this.stopAdvance(this.doIdle);
 					break;
 
 				case 'retreating':
-					this.animations.play('stop-retreat')
-						.onComplete.addOnce(function() {
-							this.doIdle();
-						}, this);
+					this.stopRetreat(this.doIdle);
 			}
 		},
 
@@ -146,10 +182,9 @@
 					break;
 
 				case 'retreating':
-					this.animations.play('stop-retreat')
-						.onComplete.addOnce(function() {
+					this.stopRetreat(function() {
 							this.doAdvance(speed);
-						}, this);
+						});
 
 					this.body.velocity.x = speed;
 					break;
@@ -165,14 +200,46 @@
 					break;
 
 				case 'advancing':
-					this.animations.play('stop-advance')
-						.onComplete.addOnce(function() {
+
+					this.stopAdvance(function() {
 							this.doRetreat(speed);
-						}, this);
+						});
 
 					this.body.velocity.x = speed;
 					break;
 			}	
+		},
+
+		ascend: function(height, duration) {
+			switch(this.state) {
+				case 'none':
+				case 'idle':
+					this.doAscend(height, duration);
+
+				case 'advancing':
+					this.stopAdvance(function() {
+						this.doAscend(height, duration) 
+					});
+
+					this.body.velocity.x = 0;
+					break;
+
+				case 'retreating':
+					this.stopRetreat(function() {
+						this.doAscend(height, duration);
+					});
+
+					this.body.velocity.x = 0;
+					break;
+			}
+		},
+
+		drop: function() {
+			if(!this._dropping && this.ascended) {
+				this._dropping = true;
+				this.ascended = false;
+				this.body.acceleration.y = Enemy.Knockback.Gravity;
+			}
 		},
 
 		knockback: function(velx, vely) {
@@ -217,6 +284,11 @@
 			this.state = 'standing';
 		},
 
+		doPunch: function() {
+			this.switchToExtraAtlas();
+			this.animations.play('')
+		},
+
 		doIdle: function() {
 			this.switchToMainAtlas();
 			this.animations.play('idle');
@@ -249,13 +321,44 @@
 			this.state = 'retreating';
 		},
 
+		stopAdvance: function(callback, context) {
+			context = context || this;
+			if(this.state !== 'advancing') 
+				callback.apply(this);
+			else {
+				this.animations.play('stop-advance') 
+					.onComplete.addOnce(callback, context);
+			}
+		},
+
+		stopRetreat: function(callback, context) {
+			context = context || this;
+			if(this.state !== 'retreating')
+				callback.apply(this);
+			else {
+				this.animations.play('stop-retreat')
+					.onComplete.addOnce(callback, context);
+			}
+		},
+		
+		doAscend: function(height, duration) {
+			this.switchToMainAtlas();	
+			this.animations.play('idle');
+
+			var tween = this.game.add.tween(this)
+				.to({ y: this._startY - height }, duration, Phaser.Easing.Quadratic.InOut);
+
+			tween.onComplete.addOnce(this.idle, this);
+			tween.start();
+
+			this.state = 'ascending';
+		},
+
 		setFacing: function(xVal) {
 			if(xVal < 0) {
-				this.scale.x = 1;
 				this.facing = Phaser.LEFT;
 			}
 			else {
-				this.scale.x = -1;
 				this.facing = Phaser.RIGHT;
 			}
 		},
@@ -299,6 +402,21 @@
 	var tmpRect = new Phaser.Rectangle();
 
 	Object.defineProperties(Enemy.prototype, {
+		facing: {
+			get: function() {
+				return this._facing;
+			},
+			set: function(val) {
+				if(val === Phaser.RIGHT) {
+					this.scale.x = -1;
+					this._facing = Phaser.RIGHT;
+				}
+				else {
+					this.scale.x = 1;
+					this._facing = Phaser.LEFT;
+				}
+			}
+		},
 		state: {
 			get: function() {
 				return this._state;
@@ -306,6 +424,16 @@
 			set: function(val) {
 				this.prevState = this._state;
 				this._state = val;
+			}
+		},
+		ascended: {
+			get: function() {
+				return this.y < this._startY;
+			}
+		},
+		dropping: {
+			get: function() {
+				return this._dropping;
 			}
 		},
 		acceptCommands: {

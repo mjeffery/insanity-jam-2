@@ -40,7 +40,31 @@
 		},
 
 		chooseNextAction: function() {
-			var choice = this.weightedSelect([6, 3, 2, 1], [['near', 'pause'], 'mid', 'far', 'pause']);
+			
+			if(this.enemy.dropping) {
+				this.do(['near'])
+			}
+			else if(this.enemy.ascended)
+				this.do(['cross', 'pause', 'drop']);
+			else {
+				this.do(['mid', 'ascend']);
+			}
+			return;
+
+			var weights = [], 
+				choices = [],
+				agent = this.enemy;
+
+			if(agent.ascended) {
+				choices.push(['near', 'mid', 'drop']);
+				weights.push([3, 3, 3]);
+			}
+			else {
+				choices.push(['near', 'pause'], ['near', 'mid'], 'mid', 'far', 'ascend');	
+				weights.push(3, 3, 4, 2, 2);
+			}
+
+			var choice = this.weightedSelect(weights, choices);
 			this.do(choice);
 		},
 
@@ -49,6 +73,7 @@
 				_.forEach(choice, this.do, this);
 			}
 			else {
+				console.log('doing \"' + choice + '\"');
 				var action = this.createAction(choice);
 				this.actionQueue.push(action);
 				action.events.onComplete.addOnce(this.onActionComplete, this);
@@ -60,6 +85,9 @@
 				case 'near': return new GoNearAction(this.enemy, this.sensor);
 				case 'mid': return new GoMidAction(this.enemy, this.sensor);
 				case 'far': return new GoFarAction(this.enemy, this.sensor);
+				case 'ascend': return new AscendAction(this.enemy);
+				case 'drop': return new DropAction(this.enemy);
+				case 'cross': return new CrossAction(this.enemy, this.sensor);
 				case 'pause': return new WaitAction(this.enemy, 0.3);
 			}
 		},

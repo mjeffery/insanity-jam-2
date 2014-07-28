@@ -11,16 +11,23 @@
 			var agent = this.agent,
 				sensor = this.sensor,
 				speed = sensor.x < agent.x ? -Enemy.Move.Speed : Enemy.Move.Speed;
-			
-			agent.advance(speed);
+
+			if(sensor.withinDistance(agent, Enemy.Distance.Near + 10))
+				this.complete();
+			else
+				agent.advance(speed);
 		},
 
 		think: function() {
 			var agent = this.agent,
 				sensor = this.sensor;
 
-			if(Math.abs(sensor.right - agent.x) < Enemy.Distance.Near) {
+			if(sensor.withinDistance(agent, Enemy.Distance.Near)) {
 				this.complete();
+			}
+			else if(!sensor.withinDistance(agent, Enemy.Distance.Far)) {
+				var speed = sensor.x < agent.x ? -Enemy.Move.Speed : Enemy.Move.Speed;
+				agent.advance(speed);
 			}
 		}
 	});

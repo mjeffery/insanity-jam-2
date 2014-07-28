@@ -9,6 +9,7 @@
 		this.agent = agent;
 		this.sensor = sensor;
 		this.started = false;
+		this.completed = false;
 		this.events = new ActionEvents(); 
 	}
 
@@ -20,14 +21,18 @@
 				this.events.onStart.dispatch(this);
 			}
 
-			this.think();
+			if(!this.completed) 
+				this.think();
+
+			if(this.completed)
+				this.events.onComplete.dispatch(this);
 		},
 
 		start: function() { },
 		think: function() { },
 
 		complete: function() {
-			this.events.onComplete.dispatch(this);
+			this.completed = true;
 		}
 	}
 

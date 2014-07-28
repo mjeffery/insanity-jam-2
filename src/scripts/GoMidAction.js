@@ -35,8 +35,11 @@
 				 	this.side == Phaser.RIGHT &&
 					Math.abs(sensor.right + Enemy.Distance.Mid - agent.x) < GoMidAction.Slop
 				) ||
-				Math.abs(sensor.left - Enemy.Distance.Mid - agent.x) < GoMidAction.Slop)
-			{
+				(
+				 	this.side == Phaser.LEFT &&
+					Math.abs(sensor.left - Enemy.Distance.Mid - agent.x) < GoMidAction.Slop
+				)
+			) {
 				this.complete();
 			}
 		}

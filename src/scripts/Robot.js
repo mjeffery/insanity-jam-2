@@ -122,6 +122,12 @@
 	}
 
 	_.extend(Robot, {
+		Attack: {
+			Speed: {
+				Min: 600,
+				Max: 2000
+			}
+		},
 		preload: function(load) {
 			load.atlasJSONArray('player atlas', 'assets/atlas/player.png', 'assets/atlas/player.json');
 			load.physics('player physics', 'assets/physics/new robot.json');

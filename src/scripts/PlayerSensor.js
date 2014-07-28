@@ -8,6 +8,11 @@
 	PlayerSensor.prototype = {
 		update: function() {
 			this._rect.copyFrom(this.player.cameraRect);
+		},
+
+		withinDistance: function(sprite, distance) {
+			var edge = sprite.x > this.x ? this.right : this.left;
+			return Math.abs(edge - sprite.x) < distance;
 		}
 	};
 

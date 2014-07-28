@@ -23,16 +23,26 @@
 			Instructions.preload(load);
 			HealthBar.preload(load);
 			Enemy.preload(load);
+			Intro.preload(load);
+
 
 			load.onLoadComplete.addOnce(this.onLoadComplete, this);					
 		},
 		create: function() {
-			this.stage.backgroundColor = '#000000';
+			this.stage.setBackgroundColor('#530301');
 		},
 		onLoadComplete: function() {
 			this.state.start('game');
+
+			/*
+			this.fadeOut(300, 700).onComplete.add(function() {
+				this.state.start('intro');
+			}, this);
+			*/
 		}
 	};
+
+	FadeMixin(Preload.prototype);
 
 	exports.Preload = Preload;
 })(this);

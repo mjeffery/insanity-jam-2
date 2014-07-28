@@ -19,8 +19,8 @@
 			var agent = this.agent,
 				sensor = this.sensor;
 
-			if(Math.abs(sensor.left - agent.x) > Enemy.Distance.Far) {
-				this.events.onComplete.dispatch(this);
+			if(!sensor.withinDistance(agent, Enemy.Distance.Far)) {
+				this.complete();
 			}
 		}
 	});

@@ -76,7 +76,7 @@
 			// resolve damage for robot punches and kicks
 			_.forEach(this.robot.damageSources, function(damage) {
 				var velocity = damage.calculateVelocity();
-				if(velocity > 600 && SAT.circleVsRect(damage.circle, this.enemy.victim.rect)) {
+				if(velocity > Robot.Attack.Speed.Min && SAT.circleVsRect(damage.circle, this.enemy.victim.rect)) {
 					var side  = (this.robot.torso.x < this.enemy.x) ? Phaser.LEFT : Phaser.RIGHT;
 					this.enemy.takeDamage(side, damage.circle, velocity);
 				}
@@ -99,6 +99,8 @@
 			//this.game.debug.body(this.ground.arcade);
 		}
 	};
+
+	FadeMixin(Game.prototype);
 
 	exports.Game = Game;	
 })(this);
