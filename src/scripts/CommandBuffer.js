@@ -13,6 +13,7 @@
 				onStringEnd: new Phaser.Signal()	 // when a command string ends
 			},
 
+			_inputEnabled: false,
 			_stringTimer: 0,
 			_stringTimerMax: 1,
 
@@ -88,8 +89,18 @@
 		},
 
 		onKeyDown: function(key) {
-			var data = this.keys[key.keyCode];
-			if(data) this.pushCommand(data.command);
+			if(this._inputEnabled) {
+				var data = this.keys[key.keyCode];
+				if(data) this.pushCommand(data.command);
+			}
+		},
+
+		onInputEnabled: function() {
+			this._inputEnabled = true;
+		},
+
+		onInputDisabled: function() {
+			this._inputEnabled = false;
 		}
 	});
 

@@ -7,7 +7,7 @@
 
 	PlayerSensor.prototype = {
 		update: function() {
-			this._rect.copyFrom(this.player.cameraRect);
+			this._rect.copyFrom(this.player.bodyRect);
 		},
 
 		withinDistance: function(sprite, distance) {

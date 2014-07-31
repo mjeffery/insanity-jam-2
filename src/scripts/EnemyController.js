@@ -40,12 +40,14 @@
 		},
 
 		chooseNextAction: function() {
-			
+			this.do(['near', 'punch', 'punch', 'punch', 'punch']);
+			return; 
+
 			if(this.enemy.dropping) {
-				this.do(['near'])
+				this.do(['near', 'punch'])
 			}
 			else if(this.enemy.ascended)
-				this.do(['cross', 'pause', 'drop']);
+				this.do(['near cross', 'pause', 'drop']);
 			else {
 				this.do(['mid', 'ascend']);
 			}
@@ -81,14 +83,20 @@
 		},
 
 		createAction: function(name) {
+			var agent = this.enemy,
+				sensor = this.sensor;
+
 			switch(name) {
-				case 'near': return new GoNearAction(this.enemy, this.sensor);
-				case 'mid': return new GoMidAction(this.enemy, this.sensor);
-				case 'far': return new GoFarAction(this.enemy, this.sensor);
-				case 'ascend': return new AscendAction(this.enemy);
-				case 'drop': return new DropAction(this.enemy);
-				case 'cross': return new CrossAction(this.enemy, this.sensor);
-				case 'pause': return new WaitAction(this.enemy, 0.3);
+				case 'near': return new GoNearAction(agent, sensor);
+				case 'mid': return new GoMidAction(agent, sensor);
+				case 'far': return new GoFarAction(agent, sensor);
+				case 'ascend': return new AscendAction(agent);
+				case 'drop': return new DropAction(agent);
+				case 'far cross':
+				case 'cross': return new CrossAction(agent, sensor);
+				case 'near cross': return new CrossAction(agent, sensor, Enemy.Distance.Near); 
+				case 'pause': return new WaitAction(agent, 1);
+				case 'punch': return new PunchAction(agent, sensor);
 			}
 		},
 

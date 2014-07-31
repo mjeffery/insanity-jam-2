@@ -1,7 +1,7 @@
 {"frames": [
 
 {
-	"filename": "robot chest.png",
+	"filename": "robot chest",
 	"frame": {"x":28,"y":2,"w":72,"h":113},
 	"rotated": false,
 	"trimmed": false,
@@ -9,7 +9,7 @@
 	"sourceSize": {"w":72,"h":113}
 },
 {
-	"filename": "robot head.png",
+	"filename": "robot head",
 	"frame": {"x":28,"y":210,"w":38,"h":41},
 	"rotated": false,
 	"trimmed": false,
@@ -17,7 +17,7 @@
 	"sourceSize": {"w":38,"h":41}
 },
 {
-	"filename": "robot left boot.png",
+	"filename": "robot left boot",
 	"frame": {"x":97,"y":117,"w":67,"h":91},
 	"rotated": false,
 	"trimmed": false,
@@ -25,7 +25,7 @@
 	"sourceSize": {"w":67,"h":91}
 },
 {
-	"filename": "robot left fist.png",
+	"filename": "robot left fist",
 	"frame": {"x":166,"y":102,"w":53,"h":83},
 	"rotated": false,
 	"trimmed": false,
@@ -33,7 +33,7 @@
 	"sourceSize": {"w":53,"h":83}
 },
 {
-	"filename": "robot left thigh.png",
+	"filename": "robot left thigh",
 	"frame": {"x":2,"y":125,"w":24,"h":121},
 	"rotated": false,
 	"trimmed": false,
@@ -41,7 +41,7 @@
 	"sourceSize": {"w":24,"h":121}
 },
 {
-	"filename": "robot left arm.png",
+	"filename": "robot left arm",
 	"frame": {"x":166,"y":52,"w":83,"h":48},
 	"rotated": false,
 	"trimmed": false,
@@ -49,7 +49,7 @@
 	"sourceSize": {"w":83,"h":48}
 },
 {
-	"filename": "robot right arm.png",
+	"filename": "robot right arm",
 	"frame": {"x":166,"y":2,"w":83,"h":48},
 	"rotated": false,
 	"trimmed": false,
@@ -57,7 +57,7 @@
 	"sourceSize": {"w":83,"h":48}
 },
 {
-	"filename": "robot right boot.png",
+	"filename": "robot right boot",
 	"frame": {"x":28,"y":117,"w":67,"h":91},
 	"rotated": false,
 	"trimmed": false,
@@ -65,7 +65,7 @@
 	"sourceSize": {"w":67,"h":91}
 },
 {
-	"filename": "robot right fist.png",
+	"filename": "robot right fist",
 	"frame": {"x":102,"y":2,"w":53,"h":83},
 	"rotated": false,
 	"trimmed": false,
@@ -73,7 +73,7 @@
 	"sourceSize": {"w":53,"h":83}
 },
 {
-	"filename": "robot right thigh.png",
+	"filename": "robot right thigh",
 	"frame": {"x":2,"y":2,"w":24,"h":121},
 	"rotated": false,
 	"trimmed": false,

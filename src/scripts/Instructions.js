@@ -17,9 +17,9 @@
 		this.currentPage = 0;
 		pages[0].visible = true;
 
-		_.extend(this.events, {
+		this.events = {
 			onComplete: new Phaser.Signal()
-		})
+		};
 
 		var advanceKey = this.advanceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 		advanceKey.onDown.add(this.advance, this);
@@ -48,8 +48,10 @@
 			
 			pages[oldPage].visible = false;
 			
-			if(newPage >= pages.length) 
+			if(newPage >= pages.length) {
+				this.events.onComplete.dispatch();
 				this.destroy();
+			}
 			else {
 				pages[newPage].visible = true;
 				this.currentPage = newPage;

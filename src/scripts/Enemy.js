@@ -14,7 +14,10 @@
 			onDamage: new Phaser.Signal(),
 			onCommandPause: new Phaser.Signal(),		// fires when the enemy cannot receive commands 
 			onCommandResume: new Phaser.Signal(),		// fires when the enemy can receive commands
+			onActionComplete: new Phaser.Signal(),		// fires when an "action" completes
 		});
+
+		this.collisionGroups = collisionGroups;
 
 		this._startY = y;
 		this._facing = Phaser.LEFT;
@@ -26,16 +29,20 @@
 		this._hp = 100;
 		this._maxHp = 100;
 
+		var punchBullet = this._punchBullet = new EnemyPunchDamage(game, this.collisionGroups, 0, 0);
+		this.game.add.existing(punchBullet);
+		punchBullet.kill();
+
 		this.idle();
 	}
 
 	_.extend(Enemy, {
 		Knockback: {
-			Gravity: 300,
+			Gravity: 500,
 			TurnThreshold: 20,
 			Launch: {
 				X: 200,
-				Y: -300
+				Y: -450
 			}
 		},
 		WakeUp: {
@@ -56,6 +63,17 @@
 				Height: 250,
 				Duration: 750
 			}
+		},
+		Punch: {
+			Offset: {
+				X: 0,
+				Y: -150
+			},
+			Velocity: {
+				X: 850,
+				Y: -450
+			},
+			Lifetime: 200
 		},
 		
 		preload: function(load) {
@@ -102,6 +120,25 @@
 					if(this._wakeUpTimer >= Enemy.WakeUp.Time)
 						this.stand();
 					break;
+
+				case 'punching':
+					if(!this._firedPunchBullet &&
+					   this.animations.currentFrame.name === 'slash__003.png') 
+					{
+						var game = this.game,
+							x = this.x + Enemy.Punch.Offset.X,
+							y = this.y + Enemy.Punch.Offset.Y,
+							vx = this.facing == Phaser.RIGHT ? Enemy.Punch.Velocity.X : -Enemy.Punch.Velocity.X,
+							vy = -Enemy.Punch.Velocity.Y,
+							bullet = this._punchBullet;
+								
+						bullet.reset(x, y);
+						bullet.lifespan = Enemy.Punch.Lifetime;
+						bullet.body.velocity.x = vx; 
+						bullet.body.velocity.y = vy;
+
+						this._firedPunchBullet = true;
+					}
 			}
 		},
 
@@ -130,26 +167,21 @@
 		},
 
 
-		punch: function() {
+		punch: function(speed) {
 			switch(this.state) {
 				case 'none':
 				case 'idle':
-					break;
-
-				case 'ascending':
-					this.animations.play('start-advance')
-						.onComplete.addOnce(this.doPunch, this);
+					this.startPunch(speed);
 					break;
 
 				case 'advancing':
-					this.doPunch();
+					this.doPunch(speed);
 					break;
 
 				case 'retreating':
 					this.stopRetreat(function() {
-							this.animations.play('start-advance')
-								.onComplete(this.doPunch, this);
-						}, this);
+						this.startPunch(speed);
+					});
 					break;
 			}	
 		},
@@ -160,6 +192,7 @@
 				case 'none':
 				case 'standing':
 				case 'ascending':
+				case 'punching':
 					this.doIdle();
 					break;
 
@@ -175,7 +208,11 @@
 		advance: function(speed) {
 
 			switch(this.state) {
-				case 'advancing': return;
+				case 'advancing': 
+					this.body.velocity.x = speed;
+					this.setFacing(speed);
+					break;
+
 				case 'none':
 				case 'idle': 
 					this.doAdvance(speed);
@@ -193,7 +230,11 @@
 
 		retreat: function(speed) {
 			switch(this.state) {
-				case 'retreating': return; //TODO factor in speed!
+				case 'retreating': 
+					this.body.velocity.x = speed;
+					this.setFacing(-speed);
+					break;
+
 				case 'none':
 				case 'idle':
 					this.doRetreat(speed);
@@ -215,6 +256,7 @@
 				case 'none':
 				case 'idle':
 					this.doAscend(height, duration);
+					break;
 
 				case 'advancing':
 					this.stopAdvance(function() {
@@ -234,7 +276,7 @@
 			}
 		},
 
-		drop: function() {
+		drop: function(duration) {
 			if(!this._dropping && this.ascended) {
 				this._dropping = true;
 				this.ascended = false;
@@ -284,16 +326,47 @@
 			this.state = 'standing';
 		},
 
-		doPunch: function() {
+		startPunch: function(speed) {
+			this.switchToMainAtlas();
+			this.setFacing(speed);
+			this.animations.play('start-advance')
+				.onComplete.addOnce(function() {
+					this.doPunch(speed);
+				}, this); 
+
+			this.body.velocity.x = speed;
+			this.state = 'punching';
+		},
+
+		doPunch: function(speed) {
 			this.switchToExtraAtlas();
-			this.animations.play('')
+			this.setFacing(speed);
+			this.animations.play('slash')
+				.onComplete.addOnce(this.stopPunch, this);
+			
+			//TODO how to make kinematic bullet?
+			this._firedPunchBullet = false;
+			
+			this.body.velocity.x = speed;
+			this.body.velocity.y = 0; // what?
+			if(this.state !== 'punching')
+				this.state = 'punching';
+		},
+
+		stopPunch: function() {
+			this.switchToMainAtlas();
+			this.animations.play('stop-advance')
+				.onComplete.addOnce(function() {
+					this.idle();
+					this.events.onActionComplete.dispatch(this, 'punch');
+				}, this);
 		},
 
 		doIdle: function() {
 			this.switchToMainAtlas();
 			this.animations.play('idle');
 
-			this.body.velocity.x = 0;
+			this.body.velocity.setTo(0, 0); 
 			this.state = 'idle';
 		},
 
@@ -348,7 +421,11 @@
 			var tween = this.game.add.tween(this)
 				.to({ y: this._startY - height }, duration, Phaser.Easing.Quadratic.InOut);
 
-			tween.onComplete.addOnce(this.idle, this);
+			tween.onComplete.addOnce(function() {
+				this.idle();
+				this.events.onActionComplete.dispatch(this, 'ascend');
+			}, this);
+
 			tween.start();
 
 			this.state = 'ascending';
@@ -394,8 +471,12 @@
 			this.loadTexture('enemy-extra-atlas');
 			this.anchor.setTo(0.5, 0.5);
 
-			this.animations.add('slash', Phaser.Animation.generateFrameNames('slash__', 0, 7, '.png', 3), 5);
+			this.animations.add('slash', Phaser.Animation.generateFrameNames('slash__', 0, 7, '.png', 3), 15); 
 			this.animations.add('stand', Phaser.Animation.generateFrameNames('stand__', 0, 7, '.png', 3), 10);
+		},
+
+		onBlockStatus: function(side, isBlocking) {
+			this._punchBullet.onBlockStatus(side, isBlocking);
 		}
 	});
 
@@ -434,6 +515,11 @@
 		dropping: {
 			get: function() {
 				return this._dropping;
+			}
+		},
+		vulnerable: {
+			get: function() {
+				return this._vulnerable;
 			}
 		},
 		acceptCommands: {

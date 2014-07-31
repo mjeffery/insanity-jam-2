@@ -25,7 +25,7 @@
 			if(sensor.withinDistance(agent, Enemy.Distance.Near)) {
 				this.complete();
 			}
-			else if(!sensor.withinDistance(agent, Enemy.Distance.Far)) {
+			else /*if(!sensor.withinDistance(agent, Enemy.Distance.Far)) */ {
 				var speed = sensor.x < agent.x ? -Enemy.Move.Speed : Enemy.Move.Speed;
 				agent.advance(speed);
 			}

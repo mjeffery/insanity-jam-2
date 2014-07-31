@@ -1,6 +1,7 @@
 (function(exports) {
-	function CrossAction(agent, sensor) {
+	function CrossAction(agent, sensor, distance) {
 		Action.call(this, agent, sensor);
+		this.distance = distance || Enemy.Distance.Mid;
 	}
 
 	CrossAction.prototype = Object.create(Action.prototype);
@@ -14,11 +15,11 @@
 
 		
 			if(side === Phaser.RIGHT) {
-				this.target = sensor.left - Enemy.Distance.Mid;
+				this.target = sensor.left - this.distance;
 				agent.advance(-Enemy.Move.CrossSpeed);
 			}
 			else {
-				this.target = sensor.right + Enemy.Distance.Mid;
+				this.target = sensor.right + this.distance;
 				agent.advance(Enemy.Move.CrossSpeed);
 			}
 

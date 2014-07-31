@@ -17,12 +17,16 @@
 			this.side = side;
 
 			if(side == Phaser.RIGHT) {
-				if(agent.x < sensor.right + Enemy.Distance.Mid - GoMidAction.Slop) agent.retreat(Enemy.Move.Speed);
-				else agent.advance(-Enemy.Move.Speed);
+				if(agent.x < sensor.right + Enemy.Distance.Mid - GoMidAction.Slop) 
+					agent.retreat(Enemy.Move.Speed);
+				else 
+					agent.advance(-Enemy.Move.Speed);
 			}
 			else {
-				if(agent.x < sensor.left - Enemy.Distance.Mid + GoMidAction.Slop) agent.advance(-Enemy.Move.Speed);
-				else agent.retreat(Enemy.Move.Speed);
+				if(agent.x < sensor.left - Enemy.Distance.Mid + GoMidAction.Slop)
+					agent.advance(Enemy.Move.Speed);
+				else 
+					agent.retreat(-Enemy.Move.Speed);
 			}
 		},
 

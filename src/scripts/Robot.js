@@ -1,12 +1,34 @@
 (function(exports) {
 	
-	function Robot(game, collisionGroups, x, y, debug) {
+	function Robot(game, collisionGroups, materials, x, y, debug) {
 		var physics = game.physics;
 
-		this.game = game;
-		this.debug = !!debug;
+		_.extend(this, {
+			game: game,
+			debug: !!debug,
 
-		this.collisionGroups = collisionGroups;	
+			events: {
+				onDamage: new Phaser.Signal(),			// fires when hit
+				onDefeated: new Phaser.Signal(), 		// fires when HP equals 0
+				onInputEnabled: new Phaser.Signal(),    // fires when input is enabled
+				onInputDisabled: new Phaser.Signal(),	// fires when input is disabled
+				onBlockStatus: new Phaser.Signal()
+			},
+			
+			collisionGroups: collisionGroups,	
+			materials: materials,
+
+			_damageEnabled: true,
+			_inputEnabled: false,
+
+			_invincible: false,
+			_invincibilityTimer: 0,
+
+			blocking: {
+				right: false,
+				left: false
+			}
+		});
 
 		this._parts = [];
 
@@ -19,25 +41,24 @@
 
 		this._temp = {
 			circle: { x:0, y:0, radius:0 },
-			rect: new Phaser.Rectangle(),
-			accumulator: {
-				min: { x: 0, y: 0 },
-				max: { x: 0, y: 0 }
-			}
+			rect: new Phaser.Rectangle()
 		};
-		
-		left.thigh = this.addPart(305, 331, 'robot left thigh');
-		right.thigh = this.addPart(348, 332, 'robot right thigh');
+
+		this._hp = this._maxHp = 100;
+
+
+		left.thigh = this.addPart(305, 331, 'robot left thigh', true);
+		right.thigh = this.addPart(348, 332, 'robot right thigh', true);
 
 		left.arm = this.addPart(275, 218, 'robot left arm');
 		right.arm = this.addPart(372, 218, 'robot right arm');
 
-		var torso = this.torso = this.addPart(324, 234, 'robot chest');
+		var torso = this.torso = this.addPart(324, 234, 'robot chest', true);
 
 		var head = this.head = this.addPart(325, 171, 'robot head');	
 
-		left.foot = this.addPart(290, 420, 'robot left boot');
-		right.foot = this.addPart(361, 420, 'robot right boot');
+		left.foot = this.addPart(290, 420, 'robot left boot', true);
+		right.foot = this.addPart(361, 420, 'robot right boot', true);
 
 		left.hand = this.addPart(266, 214, 'robot left fist');
 		right.hand = this.addPart(382, 214, 'robot right fist');
@@ -56,11 +77,22 @@
 
 		this.neck = this.addJoint(torso, [0,-7 - (113/2)], head, [0,0]);
 
+
+		this._coreParts = [torso];
+
 		this.damageSources = [];
 		this.addDamage(left.hand, [28 - 30, 16 + 5], 20);
 		this.addDamage(right.hand, [28 - 25, 15 + 5], 20);
 		this.addDamage(left.foot, [0, -15], 30);
 		this.addDamage(right.foot, [0, -15], 30);
+
+		/*
+		this.addVictim(torso);
+		this.addVictim(left.thigh);
+		this.addVictim(left.foot);
+		this.addVictim(right.thigh);
+		this.addVictim(right.foot);
+		*/
 
 		left.legController = new LimbController(
 			left.hip, 
@@ -72,6 +104,10 @@
 				extended: {
 					limit: 0,
 					motorDir: -1
+				},
+				relaxed: {
+					lowerLimit: -3 * Math.PI / 4,
+					upperLimit: Math.PI / 2 
 				}
 			},
 			left.knee,
@@ -83,6 +119,10 @@
 				extended: {
 					limit: 0,
 					motorDir: 1
+				},
+				relaxed: {
+					lowerLimit: 0,
+					upperLimit: 3 * Math.PI / 4
 				}
 			}
 		);
@@ -97,6 +137,10 @@
 				extended: {
 					limit: -3 * Math.PI / 16,
 					motorDir: 1
+				},
+				relaxed: {
+					lowerLimit: - Math.PI / 4,
+					upperLimit: 5 * Math.PI / 16
 				}
 			},
 			left.elbow,
@@ -108,6 +152,10 @@
 				extended: {
 					limit: 3 * Math.PI / 4,
 					motorDir: -2
+				},
+				relaxed: {
+					lowerLimit: -2 * Math.PI / 8,
+					upperLimit: 3 * Math.PI / 4
 				}
 			}
 		);
@@ -115,10 +163,19 @@
 		right.legController = left.legController.mirror(right.hip, right.knee);
 		right.armController = left.armController.mirror(right.shoulder, right.elbow);
 
-		left.legController.extend(1);
-		right.legController.extend(1);
-		left.armController.retract(1);
-		right.armController.retract(1);
+		this.controllers = [ right.legController, right.armController, left.legController, left.armController];
+		
+		right.armController.events.onStateChange.add(this.onRightArmStateChange, this);
+		left.armController.events.onStateChange.add(this.onLeftArmStateChange, this);
+
+		this.tighten();
+
+
+		var bodyRect = this.bodyRect;
+		var arcade = this.arcade = game.add.sprite(bodyRect.x, bodyRect.y);
+		game.physics.arcade.enable(arcade);
+		arcade.body.setSize(bodyRect.width, bodyRect.height);
+
 	}
 
 	_.extend(Robot, {
@@ -128,6 +185,9 @@
 				Max: 2000
 			}
 		},
+		Invincibility: {
+			Duration: 1
+		},
 		preload: function(load) {
 			load.atlasJSONArray('player atlas', 'assets/atlas/player.png', 'assets/atlas/player.json');
 			load.physics('player physics', 'assets/physics/new robot.json');
@@ -136,14 +196,41 @@
 
 	Robot.prototype = {
 
-		addPart: function(x, y, key) {
-			var part = this.game.add.sprite(x + this.startx, y + this.starty, 'player atlas', key + '.png');
+		update: function() {
+			// collision shape for the enemy...
+			var bodyRect = this.bodyRect;
+			this.arcade.body.x = bodyRect.x;
+			this.arcade.body.y = bodyRect.y;
+			this.arcade.body.setSize(bodyRect.width, bodyRect.height);
+
+			// handle invincibility
+			if(this._invincible) {
+				this._invincibilityTimer -= this.game.time.physicsElapsed;
+				if(this._invincibilityTimer <= 0)
+					this._invincible = false;
+			}	
+
+			// update controllers
+			_.forEach(this.controllers, function(controller) {
+				controller.update();
+			});
+		},
+
+		addPart: function(x, y, key, canDamage) {
+			var part = this.game.add.sprite(x + this.startx, y + this.starty, 'player atlas', key);
 
 			this.game.physics.p2.enable(part, this.debug);
 			part.body.clearShapes();
 			part.body.loadPolygon('player physics', key);
 			part.body.setCollisionGroup(this.collisionGroups.player.body);
-			part.body.collides(this.collisionGroups.world);
+			part.body.setMaterial(this.materials.robot);
+			
+			if(canDamage) {
+				part.body.collides([this.collisionGroups.world, this.collisionGroups.enemy.damage, this.collisionGroups.enemy.blocked]);		
+				part.body.onBeginContact.add(this.onContact, this);
+			}
+			else
+				part.body.collides(this.collisionGroups.world);
 
 			this._parts.push(part);
 
@@ -177,6 +264,8 @@
 		}, 
 
 		processCommandString: function(commandString) {
+			if(!this._inputEnabled) return;
+
 			var side, controller, action, scale, self = this;
 
 			_.chain(commandString)
@@ -189,7 +278,7 @@
 					side = (_.contains(command, 'left'))  ? self.left : self.right;
 					if(_.contains(command, 'arm')) {
 						controller = side.armController;
-						scale = [1, 3.5, 6, 9, 12, 15];
+						scale = [1, 4.5, 6, 9, 12, 15];
 					}
 					else {
 						controller = side.legController;
@@ -199,43 +288,157 @@
 
 					controller[action](scale[timesPressed - 1] || 18);
 				})
+		},
+
+		takeDamage: function(amount) {
+			if(this._invincible) return;
+
+			this.relax();
+			this._damageEnabled = false;
+			this.inputEnabled = false;
+
+			this.hp -= amount || 0;
+
+			this.startInvincibility();
+		},
+
+		chipDamage: function(amount) {
+			if(this._invincible) return;
+
+			this.hp -= amount || 0;
+
+			this.startInvincibility(0.2);
+		},
+
+		relax: function() {
+			this.left.armController.relax();
+			this.left.legController.relax();
+			this.right.armController.relax();
+			this.right.legController.relax();
+		},
+
+		tighten: function() {
+			this.left.legController.extend(1);
+			this.right.legController.extend(1);
+			this.left.armController.retract(1);
+			this.right.armController.retract(1);
+		},
+
+		startInvincibility: function(duration) {
+			this._invincible = true;
+			this._invincibilityTimer = duration || Robot.Invincibility.Duration;
+		},
+
+		onContact: function(body, myShape, theirShape, equation) {
+			if(theirShape.collisionGroup === this.collisionGroups.enemy.damage.mask) {
+				this.takeDamage(15);
+			}
+			else if(theirShape.collisionGroup === this.collisionGroups.enemy.blocked.mask) {
+				this.chipDamage(5);
+			}
+		},
+
+		onMatchStart: function() {
+			this.inputEnabled = true;
+		},
+
+		onLeftArmStateChange: function(newState, oldState) {
+			console.log('left arm: \"' + oldState + '\" -> \"' + newState + '\"');
+
+			var oldValue = this.blocking.left,
+				newValue = (newState === 'retracted');
+			
+			if(oldValue !== newValue) {
+				this.blocking.left = newValue;
+				this.events.onBlockStatus.dispatch('left', newValue);
+			}
+		},
+
+		onRightArmStateChange: function(newState, oldState) {
+			console.log('right arm: \"' + oldState + '\" -> \"' + newState + '\"');
+
+			var oldValue = this.blocking.right,
+				newValue = (newState === 'retracted');
+			
+			if(oldValue !== newValue) {
+				this.blocking.right = newValue;
+				this.events.onBlockStatus.dispatch('right', newValue);
+			}
 		}
 	};
 
-	var tmpRect = new Phaser.Rectangle();
+	var tmpCameraRect = new Phaser.Rectangle(),
+		tmpBodyRect = new Phaser.Rectangle();
+
+	function calcBounds(parts, out) {
+		var minx, miny, max, maxy;
+
+		_.chain(parts)
+		 .map(function(part) {
+			 return part.getBounds();
+		 })
+		 .forEach(function(bounds, index) {
+			 if(index == 0) {
+				minx = bounds.left;
+				miny = bounds.top;
+				maxx = bounds.right;
+				maxy = bounds.bottom;
+			 }
+			 else {
+				minx = Math.min(minx, bounds.left);
+				miny = Math.min(miny, bounds.top);
+				maxx = Math.max(maxx, bounds.right);
+				maxy = Math.max(maxy, bounds.bottom);
+			 }
+
+		 });
+		
+		 out.setTo(minx, miny, maxx - minx, maxy - miny);
+		 out.x += this.game.camera.x;
+		 out.y += this.game.camera.y;
+	}
 
 	Object.defineProperties(Robot.prototype, {
+		hp: {
+			get: function() {
+				return this._hp;
+			},
+			set: function(val) {
+				var prevHp = this._hp;
+				this._hp = val;
+
+				if(prevHp > val) 
+					this.events.onDamage.dispatch(this._hp, this._maxHp);
+			}
+		},
+		inputEnabled: {
+			get: function() {
+				return this._inputEnabled;
+			},
+			set: function(val) {
+				if(val !== this._inputEnabled) {
+					if(val) this.events.onInputEnabled.dispatch(this);
+					else 	this.events.onInputDisabled.dispatch(this);
+					
+					this._inputEnabled = val;
+				}
+			}
+		},
 		cameraRect: {
 			get: function() {
-				var minx, miny, max, maxy;
-
-				_.chain(this._parts)
-			     .map(function(part) {
-					 return part.getBounds();
-				 })
-				 .forEach(function(bounds, index) {
-					 if(index == 0) {
-					 	minx = bounds.left;
-						miny = bounds.top;
-						maxx = bounds.right;
-						maxy = bounds.bottom;
-					 }
-					 else {
-						minx = Math.min(minx, bounds.left);
-						miny = Math.min(miny, bounds.top);
-						maxx = Math.max(maxx, bounds.right);
-						maxy = Math.max(maxy, bounds.bottom);
-					 }
-
-				 });
-				
-				 tmpRect.setTo(minx, miny, maxx - minx, maxy - miny);
-				 tmpRect.x += this.game.camera.x;
-				 tmpRect.y += this.game.camera.y;
-
-				 return tmpRect;
+				calcBounds(this._parts, tmpCameraRect);
+				return tmpCameraRect;
 			}
-		}	
+		},
+		bodyRect: {
+			get: function() {
+				calcBounds(this._coreParts, tmpBodyRect);
+				tmpBodyRect.x -= 40;
+				tmpBodyRect.width += 80;
+
+				return tmpBodyRect;
+			}
+		}
 	});
 
 	//////////////////////////////////////////////////////////////////////////////////////////

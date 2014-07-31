@@ -1,8 +1,13 @@
 (function(exports) {
 
+	var DELTA = 0.1;
+
 	function LimbController(torsoJoint, torsoOptions, limbJoint, limbOptions) {
 		_.extend(this, {
-			state: 'relaxed',
+			_state: 'none',
+			events: {
+				onStateChange: new Phaser.Signal()
+			},
 			torso: {
 				joint: torsoJoint,
 				options: _.defaults(torsoOptions || {}, {
@@ -38,6 +43,59 @@
 
 	LimbController.prototype = {
 		extend: function(speed) {
+			switch(this.state) {
+				case 'none':
+				case 'extending':
+				case 'retracting':
+				case 'retracted':
+					this.doExtend(speed);
+
+				case 'relaxed':
+			}
+		},
+
+		retract: function(speed) {
+			switch(this.state) {
+				case 'none':
+				case 'extending':
+				case 'extended':
+				case 'retracting':
+					this.doRetract(speed);
+			}
+		},
+
+		relax: function() {
+			var limb = this.limb,
+				torso = this.torso;
+
+			this.relaxJoint(torso.joint, torso.options.relaxed);
+			this.relaxJoint(limb.joint, limb.options.relaxed);
+
+			this.state = 'relaxed';
+		},
+
+				
+		update: function() {
+			var limb = this.limb,
+				torso = this.torso;
+
+			this.updateJoint(limb);
+			this.updateJoint(torso);	
+
+			if(limb.relaxed && torso.relaxed) {
+				switch(this.state) {
+					case 'extending':
+						this.state = 'extended';
+						break;
+					
+					case 'retracting':
+						this.state = 'retracted';
+						break;
+				}
+			}
+		},
+
+		doExtend: function(speed) {
 			var limb = this.limb, 
 				torso = this.torso;
 
@@ -47,7 +105,7 @@
 			this.state = 'extending';
 		},
 
-		retract: function(speed) {
+		doRetract: function(speed) {
 			var limb = this.limb, 
 				torso = this.torso;
 
@@ -56,9 +114,22 @@
 
 			this.state = 'retracting';
 		},
-		
-		update: function() {
-			
+
+		updateJoint: function(part) {
+			var joint = part.joint;
+
+			if(joint.motorIsEnabled()) {
+				if(joint.getMotorSpeed() > 0 && Math.abs(joint.angle - joint.lowerLimit) < DELTA) {
+					joint.setMotorSpeed(0.5);
+					part.relaxed = true;
+				}
+				else if(joint.getMotorSpeed() < 0 && Math.abs(joint.angle - joint.upperLimit) < DELTA) {
+					joint.setMotorSpeed(-0.5);
+					part.relaxed = true;
+				}
+				else 
+					part.relaxed = false;
+			}
 		},
 
 		driveJoint: function(joint, speed, options) {
@@ -69,6 +140,12 @@
 
 			if(!joint.motorIsEnabled()) joint.enableMotor();
 			joint.setMotorSpeed(speed * options.motorDir);
+		},
+
+		relaxJoint: function(joint, options) {
+			joint.lowerLimit = options.lowerLimit || -Math.PI / 8;
+			joint.upperLimitEnabled = options.upperLimit || Math.PI / 8;
+			if(joint.motorIsEnabled()) joint.disableMotor();
 		},
 
 		mirror: function(torsoJoint, limbJoint) {
@@ -89,12 +166,32 @@
 			function negateJointOptions(jointOptions) {
 				return {
 					retracted: negateDriveOptions(jointOptions.retracted),
-					extended: negateDriveOptions(jointOptions.extended)
+					extended: negateDriveOptions(jointOptions.extended),
+					relaxed: {
+						lowerLimit: -jointOptions.relaxed.upperLimit, 
+						upperLimit: -jointOptions.relaxed.lowerLimit
+					}
 				}
 			}
 		},
 
 	};
+
+	Object.defineProperties(LimbController.prototype, {
+		state: {
+			get: function() {
+				return this._state;
+			},
+			set: function(val) {
+				if(val !== this._state) {
+					var prevState = this._state;
+					this._state = val;
+
+					this.events.onStateChange.dispatch(val, prevState);
+				}
+			}
+		}	
+	});
 
 	exports.LimbController = LimbController;
 

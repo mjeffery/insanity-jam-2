@@ -2,6 +2,7 @@
 
 	function CommandDisplay(game, commandKeyPool, commandsToKeyCodes) {
 		Phaser.Group.call(this, game);	
+		this.fixedToCamera = true;
 		
 		_.extend(this, {
 			commandKeyPool: commandKeyPool,
@@ -11,6 +12,8 @@
 		var timerBar = this.timerBar = this.add(new TimerBar(game, -50, 18));
 		timerBar.visible = false;
 		timerBar.value = 0;
+
+		this._inputEnabled = true;
 	}
 
 	_.extend(CommandDisplay, {
@@ -77,7 +80,6 @@
 		onTimerChanged: function(curr, max, ratio) {
 			this.timerBar.value = ratio;
 		}
-
 	});
 
 	exports.CommandDisplay = CommandDisplay;
