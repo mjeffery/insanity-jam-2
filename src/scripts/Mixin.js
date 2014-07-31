@@ -1,5 +1,5 @@
 (function(exports) {
-	function createMixin(mixin) {
+	function createMixin(mixin, properties) {
 		return function(proto) {
 			for(var key in mixin) {
 				if(!mixin.hasOwnProperty(key)) continue;
@@ -10,6 +10,9 @@
 				else
 					proto[key] = value;
 			}
+
+			if(properties !== undefined)
+				Object.defineProperties(proto, properties);
 		}
 	}
 

@@ -8,8 +8,6 @@
 			debug: !!debug,
 
 			events: {
-				onDamage: new Phaser.Signal(),			// fires when hit
-				onDefeated: new Phaser.Signal(), 		// fires when HP equals 0
 				onInputEnabled: new Phaser.Signal(),    // fires when input is enabled
 				onInputDisabled: new Phaser.Signal(),	// fires when input is disabled
 				onBlockStatus: new Phaser.Signal()
@@ -24,11 +22,17 @@
 			_invincible: false,
 			_invincibilityTimer: 0,
 
+			_asleep: false,
+			_wakeUpTimer: 0,
+			_tightening: false,
+
 			blocking: {
 				right: false,
 				left: false
 			}
 		});
+
+		this.initialize(100);
 
 		this._parts = [];
 
@@ -43,9 +47,6 @@
 			circle: { x:0, y:0, radius:0 },
 			rect: new Phaser.Rectangle()
 		};
-
-		this._hp = this._maxHp = 100;
-
 
 		left.thigh = this.addPart(305, 331, 'robot left thigh', true);
 		right.thigh = this.addPart(348, 332, 'robot right thigh', true);
@@ -188,6 +189,9 @@
 		Invincibility: {
 			Duration: 1
 		},
+		WakeUp: {
+			Duration: 2
+		},
 		preload: function(load) {
 			load.atlasJSONArray('player atlas', 'assets/atlas/player.png', 'assets/atlas/player.json');
 			load.physics('player physics', 'assets/physics/new robot.json');
@@ -209,6 +213,28 @@
 				if(this._invincibilityTimer <= 0)
 					this._invincible = false;
 			}	
+
+			//TODO should be state instead of flags
+			if(this._asleep) {
+				this._wakeUpTimer -= this.game.time.physicsElapsed;
+				if(this._wakeUpTimer <= 0) {
+					this._asleep = false;
+					this._tightening = true;
+					this.tighten();
+				}
+			}
+			else if(this._tightening) {
+				var anyRestoring = false;
+				_.forEach(this.controllers, function(ctrl) {
+					if(ctrl.state === 'restoring')
+						anyRestoring = true;
+				});
+
+				if(!anyRestoring) {
+					this._tightening = false;
+					this.inputEnabled = true;
+				}
+			}
 
 			// update controllers
 			_.forEach(this.controllers, function(controller) {
@@ -300,6 +326,7 @@
 			this.hp -= amount || 0;
 
 			this.startInvincibility();
+			this.startWakeUp();
 		},
 
 		chipDamage: function(amount) {
@@ -327,6 +354,11 @@
 		startInvincibility: function(duration) {
 			this._invincible = true;
 			this._invincibilityTimer = duration || Robot.Invincibility.Duration;
+		},
+		
+		startWakeUp: function() {
+			this._asleep = true;
+			this._wakeUpTimer = Robot.WakeUp.Duration;
 		},
 
 		onContact: function(body, myShape, theirShape, equation) {
@@ -398,19 +430,9 @@
 		 out.y += this.game.camera.y;
 	}
 
-	Object.defineProperties(Robot.prototype, {
-		hp: {
-			get: function() {
-				return this._hp;
-			},
-			set: function(val) {
-				var prevHp = this._hp;
-				this._hp = val;
+	HasHpMixin(Robot.prototype);
 
-				if(prevHp > val) 
-					this.events.onDamage.dispatch(this._hp, this._maxHp);
-			}
-		},
+	Object.defineProperties(Robot.prototype, {
 		inputEnabled: {
 			get: function() {
 				return this._inputEnabled;

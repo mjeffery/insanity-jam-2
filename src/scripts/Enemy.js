@@ -2,6 +2,8 @@
 
 	function Enemy(game, collisionGroups, x, y) {
 		Phaser.Sprite.call(this, game, x, y);
+		this.initialize(100);
+
 		this.anchor.setTo(0.5, 0.5);
 
 		game.physics.arcade.enable(this);
@@ -11,7 +13,6 @@
 		this.addChild(victim);
 
 		_.extend(this.events, {
-			onDamage: new Phaser.Signal(),
 			onCommandPause: new Phaser.Signal(),		// fires when the enemy cannot receive commands 
 			onCommandResume: new Phaser.Signal(),		// fires when the enemy can receive commands
 			onActionComplete: new Phaser.Signal(),		// fires when an "action" completes
@@ -25,9 +26,6 @@
 		this._touchedGround = false;
 		this._acceptCommands = true;
 		this._vulnerable = true;
-
-		this._hp = 100;
-		this._maxHp = 100;
 
 		var punchBullet = this._punchBullet = new EnemyPunchDamage(game, this.collisionGroups, 0, 0);
 		this.game.add.existing(punchBullet);
@@ -85,6 +83,8 @@
 	Enemy.prototype = Object.create(Phaser.Sprite.prototype);
 	Enemy.prototype.constructor = Enemy;
 
+	HasHpMixin(Enemy.prototype);
+
 	_.extend(Enemy.prototype, {
 
 		takeDamage: function(side, origin, speed) {
@@ -96,6 +96,7 @@
 			vx = (side === Phaser.LEFT ? vx : -vx);
 
 			this.knockback(vx, vy);
+			this._punchBullet.kill();
 
 			this._hp -= 10; //TODO calculate damage
 

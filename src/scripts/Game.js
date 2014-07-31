@@ -74,10 +74,11 @@
 			robot.events.onInputEnabled.add(commandBuffer.onInputEnabled, commandBuffer);
 			robot.events.onInputDisabled.add(commandBuffer.onInputDisabled, commandBuffer);
 			robot.events.onBlockStatus.add(enemy.onBlockStatus, enemy);
+			robot.events.onDefeated.add(this.onDefeated, this);
 
 			enemy.events.onCommandPause.add(function() { console.log('commands paused')});
 			enemy.events.onCommandResume.add(function() { console.log('commands resumed')});
-
+			enemy.events.onDefeated.add(this.onDefeated, this);
 
 			//temp, replace with Instructions
 			controller.onMatchStart();
@@ -124,6 +125,10 @@
 			//this.game.debug.body(this.enemy);
 			//this.game.debug.body(this.robot.arcade);
 			//this.game.debug.body(this.ground.arcade);
+		},
+
+		onDefeated: function(loser) {
+			
 		}
 	};
 

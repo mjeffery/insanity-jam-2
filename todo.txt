@@ -1,0 +1,14 @@
+update Robot#bodyRect 
+	so that when the robot is "laying down", it includes the feet
+	this prevents the player from getting "free kicks"
+
+add the "cast" to the Enemy
+	casting action
+	bullet
+	tune bullet traveling across the ground
+
+block indicator?
+
+win/lose notification
+
+make it have some kind of AI?

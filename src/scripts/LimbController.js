@@ -49,8 +49,10 @@
 				case 'retracting':
 				case 'retracted':
 					this.doExtend(speed);
+					break;
 
 				case 'relaxed':
+					this.restoreExtended();
 			}
 		},
 
@@ -61,6 +63,10 @@
 				case 'extended':
 				case 'retracting':
 					this.doRetract(speed);
+					break;
+
+				case 'relaxed':
+					this.restoreRetracted();
 			}
 		},
 
@@ -74,6 +80,27 @@
 			this.state = 'relaxed';
 		},
 
+		restoreExtended: function() {
+			var limb = this.limb,
+				torso = this.torso;
+
+			this.restoreJoint(limb.joint, limb.options.extended);
+			this.restoreJoint(torso.joint, torso.options.extended);
+
+			this.nextState = 'extended';
+			this.state = 'restoring';
+		},
+
+		restoreRetracted: function() {
+			var limb = this.limb,
+				torso = this.torso;
+
+			this.restoreJoint(limb.joint, limb.options.retracted);
+			this.restoreJoint(torso.joint, torso.options.retracted);
+
+			this.nextState = 'retracted';
+			this.state = 'restoring';
+		},
 				
 		update: function() {
 			var limb = this.limb,
@@ -90,6 +117,10 @@
 					
 					case 'retracting':
 						this.state = 'retracted';
+						break;
+
+					case 'restoring':
+						this.state = this.nextState;
 						break;
 				}
 			}
@@ -113,6 +144,19 @@
 			this.driveJoint(limb.joint, speed, limb.options.retracted);
 
 			this.state = 'retracting';
+		},
+
+		restoreJoint: function(joint, options) {
+			if(!joint.motorIsEnabled()) joint.enableMotor();
+
+			if(joint.angle > options.limit) {
+				joint.lowerLimit = options.limit;
+				joint.setMotorSpeed(1);
+			}
+			else {
+				joint.upperLimit = options.limit;
+				joint.setMotorSpeed(-1);
+			}
 		},
 
 		updateJoint: function(part) {
