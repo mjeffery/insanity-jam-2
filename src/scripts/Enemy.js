@@ -31,6 +31,13 @@
 		this.game.add.existing(punchBullet);
 		punchBullet.kill();
 
+		var missiles = this._missiles = game.add.group();
+		for(var i = 0; i < 5; i++) {
+			var missile = new EnemyMagicMissile(this.game, collisionGroups);
+			missiles.add(missile);
+			missile.kill();
+		}
+
 		this.idle();
 	}
 
@@ -73,6 +80,21 @@
 			},
 			Lifetime: 200
 		},
+		Cast: {
+			Offset: {
+				X: 95,
+				Y: -115
+			},
+			Velocity: {
+				X: 250,
+				Y: 550,
+			},
+			StartingScale: 0.1,
+			Duration: 1500,
+			Cooldown: {
+				Duration: 0.33
+			}
+		},
 		
 		preload: function(load) {
 			load.atlasJSONArray('enemy-atlas', 'assets/atlas/enemy.png', 'assets/atlas/enemy.json');
@@ -86,6 +108,27 @@
 	HasHpMixin(Enemy.prototype);
 
 	_.extend(Enemy.prototype, {
+
+		magicMissile: function() {
+			var x = this.x + (this.facing === Phaser.LEFT ? -Enemy.Cast.Offset.X : Enemy.Cast.Offset.X),
+				y = this.y + Enemy.Cast.Offset.Y,
+				vx = this.facing == Phaser.LEFT ? -Enemy.Cast.Velocity.X : Enemy.Cast.Velocity.Y,
+				vy = Enemy.Cast.Velocity.Y,
+				missile = this._missiles.getFirstDead();
+
+			this._chargingMissile = missile;
+
+			missile.charge(x, y);
+
+			missile.scale.setTo(Enemy.Cast.StartingScale, Enemy.Cast.StartingScale);
+			this.game.add.tween(missile.scale)
+				.to({ x: 1, y: 1}, Enemy.Cast.Duration, undefined, true)
+				.onComplete.addOnce(function() {
+					this._castCooldown = 0;
+					this._castComplete = true;
+					missile.fire(vx, vy);
+				}, this);
+		},
 
 		takeDamage: function(side, origin, speed) {
 			if(!this._vulnerable) return;
@@ -140,6 +183,21 @@
 
 						this._firedPunchBullet = true;
 					}
+					break;
+
+				case 'casting':
+					if(this._castComplete) {
+						this._castCooldown += this.game.time.physicsElapsed;
+						if(this._castCooldown > Enemy.Cast.Cooldown.Duration) {
+							this._castCooldown = -10000; // treating this like yet another control flag
+							this.animations.play('stop-cast')
+								.onComplete.addOnce(function() {
+									this.idle();
+									this.events.onActionComplete.dispatch(this, 'cast');
+								}, this);
+						}
+					}
+					break;
 			}
 		},
 
@@ -187,6 +245,23 @@
 			}	
 		},
 
+		cast: function() {
+			switch(this.state) {
+				case 'none':
+				case 'idle':
+					this.doCast();
+					break;
+
+				case 'advancing':
+					this.stopAdvance(this.doCast);
+					break;
+
+				case 'retreating':
+					this.stopRetreat(this.doCast);
+					break;
+			}
+		},
+
 		idle: function() {
 			switch(this.state) {
 				case 'idle': return;
@@ -194,6 +269,7 @@
 				case 'standing':
 				case 'ascending':
 				case 'punching':
+				case 'casting':
 					this.doIdle();
 					break;
 
@@ -325,6 +401,21 @@
 				}, this);
 
 			this.state = 'standing';
+		},
+
+		doCast: function() {
+			this.switchToMainAtlas();
+			this.animations.play('start-cast')
+				.onComplete.addOnce(function() {
+					this.animations.play('casting');
+					this.magicMissile();
+				}, this);
+
+			this._castComplete = false;
+			this._castCooldown = 0;
+
+			this.body.velocity.x = 0;
+			this.state = 'casting';
 		},
 
 		startPunch: function(speed) {

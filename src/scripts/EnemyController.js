@@ -40,6 +40,9 @@
 		},
 
 		chooseNextAction: function() {
+			this.do(['mid', 'cast']);
+			return;
+
 			this.do(['near', 'punch', 'punch', 'punch', 'punch']);
 			return; 
 
@@ -97,6 +100,7 @@
 				case 'near cross': return new CrossAction(agent, sensor, Enemy.Distance.Near); 
 				case 'pause': return new WaitAction(agent, 1);
 				case 'punch': return new PunchAction(agent, sensor);
+				case 'cast': return new CastAction(agent, sensor);
 			}
 		},
 

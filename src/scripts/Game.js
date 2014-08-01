@@ -11,6 +11,7 @@
 			this.world.setBounds(-800, -1200, 2400, 1800);
 
 			physics.startSystem(Phaser.Physics.P2JS);
+			physics.p2.setImpactEvents(true);
 			physics.p2.gravity.y = 500;
 
 			var collisionGroups = {
@@ -24,7 +25,8 @@
 					body: physics.p2.createCollisionGroup(),
 					damage: physics.p2.createCollisionGroup(),
 					victim: physics.p2.createCollisionGroup(),
-					blocked: physics.p2.createCollisionGroup()
+					blocked: physics.p2.createCollisionGroup(),
+					magic: physics.p2.createCollisionGroup()
 				}
 			};
 

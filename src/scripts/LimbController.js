@@ -151,11 +151,11 @@
 
 			if(joint.angle > options.limit) {
 				joint.lowerLimit = options.limit;
-				joint.setMotorSpeed(1);
+				joint.setMotorSpeed(2);
 			}
 			else {
 				joint.upperLimit = options.limit;
-				joint.setMotorSpeed(-1);
+				joint.setMotorSpeed(-2);
 			}
 		},
 

@@ -2,11 +2,11 @@
 	function Ground(game, collisionGroups, materials, y, debug) {
 		Phaser.TileSprite.call(this, game, game.world.bounds.centerX, y, game.world.bounds.width, 64, 'dirt', 0);
 
-		game.physics.p2.enable(this, debug);
+		game.physics.p2.enable(this, debug); //debug);
 		this.body.setRectangleFromSprite(this);
 		this.body.static = true;
 		this.body.setCollisionGroup(collisionGroups.world);
-		this.body.collides(collisionGroups.player.body);
+		this.body.collides([collisionGroups.player.body, collisionGroups.enemy.magic]);
 		this.body.setMaterial(materials.world);
 
 		var arcade = this.arcade = game.make.sprite(game.world.bounds.left, y - 32);

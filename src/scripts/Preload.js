@@ -24,7 +24,7 @@
 			HealthBar.preload(load);
 			Enemy.preload(load);
 			Intro.preload(load);
-
+			EnemyMagicMissile.preload(load);
 
 			load.onLoadComplete.addOnce(this.onLoadComplete, this);					
 		},

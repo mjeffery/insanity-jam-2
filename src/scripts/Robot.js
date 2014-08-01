@@ -192,6 +192,9 @@
 		WakeUp: {
 			Duration: 2
 		},
+		Magic: {
+			UpwardForce: 10000
+		},
 		preload: function(load) {
 			load.atlasJSONArray('player atlas', 'assets/atlas/player.png', 'assets/atlas/player.json');
 			load.physics('player physics', 'assets/physics/new robot.json');
@@ -250,13 +253,13 @@
 			part.body.loadPolygon('player physics', key);
 			part.body.setCollisionGroup(this.collisionGroups.player.body);
 			part.body.setMaterial(this.materials.robot);
+			part.body.collides(this.collisionGroups.world);
 			
 			if(canDamage) {
-				part.body.collides([this.collisionGroups.world, this.collisionGroups.enemy.damage, this.collisionGroups.enemy.blocked]);		
-				part.body.onBeginContact.add(this.onContact, this);
+				part.body.collides(this.collisionGroups.enemy.damage, this.onCollideFist, this); 
+				part.body.collides(this.collisionGroups.enemy.blocked, this.onCollideBlocked, this);
+				part.body.collides(this.collisionGroups.enemy.magic, this.onCollideMagic, this);
 			}
-			else
-				part.body.collides(this.collisionGroups.world);
 
 			this._parts.push(part);
 
@@ -368,6 +371,26 @@
 			else if(theirShape.collisionGroup === this.collisionGroups.enemy.blocked.mask) {
 				this.chipDamage(5);
 			}
+		},
+
+		onCollideFist: function(body, punchBody, shape, punchShape) {
+			this.takeDamage(8);
+		},
+
+		onCollideBlocked: function(body, blockedBody, shape, blockedShape) {
+			this.chipDamage(2);
+		},
+
+		onCollideMagic: function(body, magicBody, shape, magicShape) {
+			if(this._invincible) return;
+			
+			this.takeDamage(15);
+
+			var x = this.torso.x, 
+				y = this.torso.y - 2000;
+
+			body.applyForce([0, Robot.Magic.UpwardForce], x, y);
+			this.torso.body.applyForce([0, Robot.Magic.UpwardForce / 2], x, y); 
 		},
 
 		onMatchStart: function() {
