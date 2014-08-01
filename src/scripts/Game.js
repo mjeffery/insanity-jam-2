@@ -61,12 +61,7 @@
 				commandKeyPool,
 				commandBuffer.commandsToKeyCodes
 			);
-			commandDisplay.x = 200;			 // why are these not in real coordinates?
-			commandDisplay.y = 275;
-			commandDisplay.timerBar.x = 135; // why do I have to set these?
-			commandDisplay.timerBar.y = 292;
-			commandDisplay.fixedToCamera = true; 
-
+			
 			// Wiring
 			commandBuffer.events.onStringEnd.add(robot.processCommandString, robot);
 			commandBuffer.events.onStringStart.add(commandDisplay.onStringStart, commandDisplay);
@@ -145,9 +140,9 @@
 			var text;
 
 			if(loser === this.robot) 
-				text = this.game.add.existing(new FightText(this.game, 'big business wins', 3000));
+				text = this.game.add.existing(new FightText(this.game, 'big business wins', 4000));
 			else
-				text = this.game.add.existing(new FightText(this.game, 'workers win'), 3000);
+				text = this.game.add.existing(new FightText(this.game, 'workers win', 6000));
 
 			text.start()
 				.addOnce(function() {

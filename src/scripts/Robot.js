@@ -266,6 +266,33 @@
 			return part;
 		},
 
+		addHintKeys: function(torso) {
+			var hints = this.hintKeys = [
+				new HintKey(this.game, -160, -90, 0), // A
+				new HintKey(this.game, -70, -90, 1),  // S
+				new HintKey(this.game, -70, 185, 2),  // D
+				new HintKey(this.game, -70, 90, 3),    // F
+				new HintKey(this.game, 70, 90, 4),
+				new HintKey(this.game, 70, 185, 5),
+				new HintKey(this.game, 70, -90, 6),
+				new HintKey(this.game, 160, -90, 7)
+			];
+
+			_.forEach(hints, torso.addChild, torso);
+		},
+
+		hideHints: function() {
+			_.forEach(this.hintKeys, function(hint) {
+				hint.visible = false;
+			});
+		},
+
+		showHints: function() {
+			_.forEach(this.hintKeys, function(hint) {
+				hint.visible = true;
+			})
+		},
+
 		addDamage: function(bodyPart, position, radius) {
 			var x = bodyPart.x + position[0],
 				y = bodyPart.y + position[1],
@@ -394,6 +421,7 @@
 		},
 
 		onMatchStart: function() {
+			this.addHintKeys(this.torso);
 			this.inputEnabled = true;
 		},
 
@@ -447,6 +475,9 @@
 			 }
 
 		 });
+
+		 minx -= 30;
+		 maxx += 30;
 		
 		 out.setTo(minx, miny, maxx - minx, maxy - miny);
 		 out.x += this.game.camera.x;
@@ -462,9 +493,15 @@
 			},
 			set: function(val) {
 				if(val !== this._inputEnabled) {
-					if(val) this.events.onInputEnabled.dispatch(this);
-					else 	this.events.onInputDisabled.dispatch(this);
-					
+					if(val) {
+						this.events.onInputEnabled.dispatch(this);
+						this.showHints();
+					}
+					else {
+					 	this.events.onInputDisabled.dispatch(this);
+						this.hideHints();
+					}
+
 					this._inputEnabled = val;
 				}
 			}

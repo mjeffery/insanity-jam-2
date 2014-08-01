@@ -67,10 +67,10 @@
 					'mid', 
 					'far',
 					'pause',
-					['ascend', 'mid', 'drop', 'pause'],
-					['ascend', 'cross', 'drop', 'pause'],
-					['ascend', 'mid', 'cast', 'drop', 'pause'],
-					['ascend', 'cross', 'mid', 'cast', 'drop', 'pause']);
+					['ascend', 'mid', 'drop'],
+					['ascend', 'cross', 'drop'],
+					['ascend', 'mid', 'cast', 'drop'],
+					['ascend', 'cross', 'mid', 'cast', 'drop']);
 				
 			weights.push(5, 5, 5, 5, 2, 5, 2, 2, 2, 2);
 		

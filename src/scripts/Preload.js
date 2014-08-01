@@ -25,6 +25,7 @@
 			Enemy.preload(load);
 			Intro.preload(load);
 			EnemyMagicMissile.preload(load);
+			HintKey.preload(load);
 
 			load.onLoadComplete.addOnce(this.onLoadComplete, this);					
 		},

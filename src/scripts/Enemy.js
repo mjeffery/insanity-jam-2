@@ -142,10 +142,7 @@
 			this._punchBullet.kill();
 
 			var interp = Math.min((speed - Robot.Attack.Speed.Min) / Robot.Attack.Speed.Max, 1);
-			this._hp -= 5 + Math.floor(interp * 50); //TODO calculate damage
-
-			this.events.onDamage.dispatch(this._hp, this._maxHp);
-				
+			this.hp -= 5 + Math.floor(interp * 45); //TODO calculate damage
 		},
 
 		update: function() {
@@ -212,17 +209,6 @@
 						this.wakeUp();
 					}
 					break;
-
-				default:
-					if(this._dropping) {
-						this._dropping = false;
-
-						this.body.acceleration.y = 0;
-
-						this.game.add.tween(this)
-							.to({ y: this._startY }, 200)
-							.start(); //TODO magic number
-					}
 			}
 		},
 
@@ -273,6 +259,7 @@
 				case 'none':
 				case 'standing':
 				case 'ascending':
+				case 'dropping':
 				case 'punching':
 				case 'casting':
 					this.doIdle();
@@ -359,10 +346,27 @@
 		},
 
 		drop: function(duration) {
-			if(!this._dropping && this.ascended) {
-				this._dropping = true;
-				this.ascended = false;
-				this.body.acceleration.y = Enemy.Knockback.Gravity;
+			switch(this.state) {
+				case 'none':
+				case 'idle':
+					this.doDrop(duration);
+					break;
+
+				case 'advancing':
+					this.stopAdvance(function() {
+						this.doDrop(duration) 
+					});
+
+					this.body.velocity.x = 0;
+					break;
+
+				case 'retreating':
+					this.stopRetreat(function() {
+						this.doDrop(duration);
+					});
+
+					this.body.velocity.x = 0;
+					break;
 			}
 		},
 
@@ -529,6 +533,23 @@
 			tween.start();
 
 			this.state = 'ascending';
+		},
+
+		doDrop: function(duration) {
+			this.switchToMainAtlas();
+			this.animations.play('idle');
+
+			var tween = this.game.add.tween(this)
+				.to({ y: this._startY }, duration, Phaser.Easing.Quadratic.Out);
+
+			tween.onComplete.addOnce(function(){
+				this.idle();
+				this.events.onActionComplete.dispatch(this, 'descend');
+			}, this);
+
+			tween.start();
+
+			this.state = 'dropping';
 		},
 
 		setFacing: function(xVal) {

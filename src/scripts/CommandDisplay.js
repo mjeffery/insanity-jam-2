@@ -9,7 +9,7 @@
 			commandsToKeyCodes: commandsToKeyCodes,
 		});
 
-		var timerBar = this.timerBar = this.add(new TimerBar(game, -50, 18));
+		var timerBar = this.timerBar = this.add(new TimerBar(game, 400-64, 575));
 		timerBar.visible = false;
 		timerBar.value = 0;
 
@@ -51,7 +51,7 @@
 			var string = new CommandString(
 				this.game, 
 				this.commandKeyPool, 
-				this.x, this.y
+				400, 550
 			);
 
 			this.add(string);
