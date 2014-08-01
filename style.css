@@ -10,6 +10,11 @@ h1 {
 	margin-bottom: 0px;
 }
 
+.centered {
+	text-align: center;
+	margin-bottom: 0px;
+}
+
 h2 {
 	text-align: center;
 }
