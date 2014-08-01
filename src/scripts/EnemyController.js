@@ -44,33 +44,36 @@
 				choices = [],
 				agent = this.enemy;
 
-			if(agent.ascended) {
-				choices.push(['near', 'mid', 'drop', 'cast', 'far cross', 'near near']);
-				weights.push(3, 3, 3, 5, 10, 10);
-			}
-			else {
-				if(true) { // TODO check upright!
+				//if(this.sensor.canPunch) { // TODO check upright!
 					choices.push(
 						['near', 'punch'],
 						['near', 'punch', 'punch'],
 						['near', 'punch', 'pause', 'punch'],
 						['near', 'punch', 'punch', 'punch']);
 					weights.push(7, 5, 3, 3);
-				}
+				//}
 				
 				choices.push(
 					['mid', 'cast'],
 					['far', 'cast'],
 					['cast'],
-					['cast', 'pause', 'cast'],
+					['cast', 'pause', 'cast']);
+				weights.push(3, 3, 1, 3);
+
+				choices.push(
 					['near', 'mid'], 
+					['near', 'mid', 'near'],
+					['near', 'pause'],
 					'mid', 
 					'far',
 					'pause',
-					'ascend');	
-				weights.push(3, 3, 1, 3, 4, 1, 5, 4);
+					['ascend', 'mid', 'drop', 'pause'],
+					['ascend', 'cross', 'drop', 'pause'],
+					['ascend', 'mid', 'cast', 'drop', 'pause'],
+					['ascend', 'cross', 'mid', 'cast', 'drop', 'pause']);
+				
+			weights.push(5, 5, 5, 5, 2, 5, 2, 2, 2, 2);
 		
-			}
 
 			var choice = this.weightedSelect(weights, choices);
 			this.do(choice);
@@ -101,9 +104,10 @@
 				case 'far cross':
 				case 'cross': return new CrossAction(agent, sensor);
 				case 'near cross': return new CrossAction(agent, sensor, Enemy.Distance.Near); 
-				case 'pause': return new WaitAction(agent, 1);
 				case 'punch': return new PunchAction(agent, sensor);
 				case 'cast': return new CastAction(agent, sensor);
+				default:
+					return new WaitAction(agent, 1);
 			}
 		},
 

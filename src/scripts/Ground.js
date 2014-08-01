@@ -9,10 +9,10 @@
 		this.body.collides([collisionGroups.player.body, collisionGroups.enemy.magic]);
 		this.body.setMaterial(materials.world);
 
-		var arcade = this.arcade = game.make.sprite(game.world.bounds.left, y - 32);
+		var arcade = this.arcade = game.make.sprite(game.world.bounds.left - 5000, y - 32);
 
 		game.physics.arcade.enable(arcade);
-		arcade.body.setSize(game.world.bounds.width, 64);
+		arcade.body.setSize(game.world.bounds.width + 10000, 64);
 		arcade.body.immovable = true;
 	}
 

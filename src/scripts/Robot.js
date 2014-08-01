@@ -183,7 +183,7 @@
 		Attack: {
 			Speed: {
 				Min: 600,
-				Max: 2000
+				Max: 1200
 			}
 		},
 		Invincibility: {

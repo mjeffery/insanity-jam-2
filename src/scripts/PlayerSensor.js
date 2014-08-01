@@ -20,7 +20,13 @@
 		x: { get: function() { return this._rect.centerX; } },
 		y: { get: function() { return this._rect.centerY; } },
 		left: { get: function() { return this._rect.left; } },
-		right: { get: function() { return this._rect.right; } }
+		right: { get: function() { return this._rect.right; } },
+		canPunch: { 
+			get: function() {
+				return this._rect.bottom < 400 &&
+					   this._rect.top > 200;
+			}
+		}
 	});
 
 	exports.PlayerSensor = PlayerSensor;

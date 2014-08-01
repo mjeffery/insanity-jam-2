@@ -90,9 +90,9 @@
 				Y: 550,
 			},
 			StartingScale: 0.1,
-			Duration: 1500,
+			Duration: 2500,
 			Cooldown: {
-				Duration: 0.33
+				Duration: 0.66
 			}
 		},
 		
@@ -141,7 +141,8 @@
 			this.knockback(vx, vy);
 			this._punchBullet.kill();
 
-			this._hp -= 10; //TODO calculate damage
+			var interp = Math.min((speed - Robot.Attack.Speed.Min) / Robot.Attack.Speed.Max, 1);
+			this._hp -= 5 + Math.floor(interp * 50); //TODO calculate damage
 
 			this.events.onDamage.dispatch(this._hp, this._maxHp);
 				
@@ -245,19 +246,23 @@
 			}	
 		},
 
-		cast: function() {
+		cast: function(dir) {
 			switch(this.state) {
 				case 'none':
 				case 'idle':
-					this.doCast();
+					this.doCast(dir);
 					break;
 
 				case 'advancing':
-					this.stopAdvance(this.doCast);
+					this.stopAdvance(function() {
+						this.doCast(dir);
+					});
 					break;
 
 				case 'retreating':
-					this.stopRetreat(this.doCast);
+					this.stopRetreat(function() {
+						this.doCast(dir);
+					});
 					break;
 			}
 		},
@@ -405,10 +410,11 @@
 			this.state = 'standing';
 		},
 
-		doCast: function() {
+		doCast: function(direction) {
 			this.switchToMainAtlas();
 			this.animations.play('start-cast')
 				.onComplete.addOnce(function() {
+					this.facing = direction;
 					this.animations.play('casting');
 					this.magicMissile();
 				}, this);
@@ -416,7 +422,7 @@
 			this._castComplete = false;
 			this._castCooldown = 0;
 
-			this.body.velocity.x = 0;
+			this.body.velocity.setTo(0, 0);
 			this.state = 'casting';
 		},
 
