@@ -40,33 +40,36 @@
 		},
 
 		chooseNextAction: function() {
-			this.do(['mid', 'cast']);
-			return;
-
-			this.do(['near', 'punch', 'punch', 'punch', 'punch']);
-			return; 
-
-			if(this.enemy.dropping) {
-				this.do(['near', 'punch'])
-			}
-			else if(this.enemy.ascended)
-				this.do(['near cross', 'pause', 'drop']);
-			else {
-				this.do(['mid', 'ascend']);
-			}
-			return;
-
 			var weights = [], 
 				choices = [],
 				agent = this.enemy;
 
 			if(agent.ascended) {
-				choices.push(['near', 'mid', 'drop']);
-				weights.push([3, 3, 3]);
+				choices.push(['near', 'mid', 'drop', 'cast', 'far cross', 'near near']);
+				weights.push(3, 3, 3, 5, 10, 10);
 			}
 			else {
-				choices.push(['near', 'pause'], ['near', 'mid'], 'mid', 'far', 'ascend');	
-				weights.push(3, 3, 4, 2, 2);
+				if(true) { // TODO check upright!
+					choices.push(
+						['near', 'punch'],
+						['near', 'punch', 'punch'],
+						['near', 'punch', 'pause', 'punch'],
+						['near', 'punch', 'punch', 'punch']);
+					weights.push(7, 5, 3, 3);
+				}
+				
+				choices.push(
+					['mid', 'cast'],
+					['far', 'cast'],
+					['cast'],
+					['cast', 'pause', 'cast'],
+					['near', 'mid'], 
+					'mid', 
+					'far',
+					'pause',
+					'ascend');	
+				weights.push(3, 3, 1, 3, 4, 1, 5, 4);
+		
 			}
 
 			var choice = this.weightedSelect(weights, choices);

@@ -377,6 +377,8 @@
 		},
 
 		wakeUp: function() {
+			if(this.hp <= 0) return;
+
 			this._vulnerable = true;
 			this._wakeUpTimer = 0;
 			this.state = 'waking up';

@@ -218,7 +218,7 @@
 			}	
 
 			//TODO should be state instead of flags
-			if(this._asleep) {
+			if(this._asleep && this.hp > 0) {
 				this._wakeUpTimer -= this.game.time.physicsElapsed;
 				if(this._wakeUpTimer <= 0) {
 					this._asleep = false;

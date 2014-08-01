@@ -1,8 +1,10 @@
 (function(exports) {
-	function FightText(game, key) {
+	function FightText(game, key, duration) {
 		Phaser.Sprite.call(this, game, 400, 300, 'instructions-atlas', key);
 		this.anchor.setTo(0.5, 0.5);
 		this.fixedToCamera = true;
+
+		this.duration = duration || 1000;
 
 		this.onComplete = new Phaser.Signal();
 	}
@@ -19,7 +21,7 @@
 	_.extend(FightText.prototype, {
 		start: function() {
 			var tween = game.add.tween(this)
-				.to({ y: 250 }, 1000);
+				.to({ y: 250 }, this.duration);
 				//.to({ y: 350 }, 1250);
 				//.to({ y: 1000 }, 300);
 

@@ -142,7 +142,21 @@
 		},
 
 		onDefeated: function(loser) {
-			
+			var text;
+
+			if(loser === this.robot) 
+				text = this.game.add.existing(new FightText(this.game, 'big business wins', 3000));
+			else
+				text = this.game.add.existing(new FightText(this.game, 'workers win'), 3000);
+
+			text.start()
+				.addOnce(function() {
+					this.fadeOut(700, 300)
+						.onComplete.addOnce(function() {
+							this.state.start('intro');
+						}, this)
+				}, this);
+				
 		}
 	};
 
