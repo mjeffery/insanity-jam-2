@@ -164,7 +164,9 @@
 					break;
 
 				case 'punching':
+
 					if(!this._firedPunchBullet &&
+						this.animations.currentFrame &&
 					   this.animations.currentFrame.name === 'slash__003.png') 
 					{
 						var game = this.game,
@@ -416,9 +418,9 @@
 
 		doCast: function(direction) {
 			this.switchToMainAtlas();
+			this.facing = direction;
 			this.animations.play('start-cast')
 				.onComplete.addOnce(function() {
-					this.facing = direction;
 					this.animations.play('casting');
 					this.magicMissile();
 				}, this);

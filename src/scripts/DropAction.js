@@ -8,7 +8,7 @@
 
 	_.extend(DropAction.prototype, {
 		start: function() {
-			this.agent.drop(300);
+			this.agent.drop(1200);
 			this.agent.events.onActionComplete.addOnce(this.complete, this);
 		}
 	});

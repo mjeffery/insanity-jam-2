@@ -177,6 +177,21 @@
 		game.physics.arcade.enable(arcade);
 		arcade.body.setSize(bodyRect.width, bodyRect.height);
 
+		this.events.onDefeated.addOnce(function() {
+			this.game.time.events.add(150, function() {
+				var physics = this.game.physics.p2;
+				physics.removeConstraint(this.neck);
+				physics.removeConstraint(this.left.elbow);
+				physics.removeConstraint(this.left.shoulder);
+				physics.removeConstraint(this.right.elbow);
+				physics.removeConstraint(this.right.shoulder);
+				physics.removeConstraint(this.left.hip);
+				physics.removeConstraint(this.left.knee);
+				physics.removeConstraint(this.right.hip);
+				physics.removeConstraint(this.right.knee);
+			}, this);
+		}, this);
+
 	}
 
 	_.extend(Robot, {
@@ -268,14 +283,14 @@
 
 		addHintKeys: function(torso) {
 			var hints = this.hintKeys = [
-				new HintKey(this.game, -160, -90, 0), // A
+				new HintKey(this.game, -120, -90, 0), // A
 				new HintKey(this.game, -70, -90, 1),  // S
-				new HintKey(this.game, -70, 185, 2),  // D
-				new HintKey(this.game, -70, 90, 3),    // F
-				new HintKey(this.game, 70, 90, 4),
-				new HintKey(this.game, 70, 185, 5),
+				new HintKey(this.game, -70, 100, 2),  // D
+				new HintKey(this.game, -70, 50, 3),    // F
+				new HintKey(this.game, 70, 50, 4),
+				new HintKey(this.game, 70, 100, 5),
 				new HintKey(this.game, 70, -90, 6),
-				new HintKey(this.game, 160, -90, 7)
+				new HintKey(this.game, 120, -90, 7)
 			];
 
 			_.forEach(hints, torso.addChild, torso);
@@ -283,13 +298,13 @@
 
 		hideHints: function() {
 			_.forEach(this.hintKeys, function(hint) {
-				hint.visible = false;
+				hint.hide();
 			});
 		},
 
 		showHints: function() {
 			_.forEach(this.hintKeys, function(hint) {
-				hint.visible = true;
+				hint.show();
 			})
 		},
 

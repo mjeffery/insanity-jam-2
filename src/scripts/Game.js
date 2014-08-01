@@ -139,8 +139,10 @@
 		onDefeated: function(loser) {
 			var text;
 
-			if(loser === this.robot) 
-				text = this.game.add.existing(new FightText(this.game, 'big business wins', 4000));
+			if(loser === this.robot) { 
+				text = this.game.add.existing(new FightText(this.game, 'big business wins', 6000));
+				this.camera.unfollow();
+			}
 			else
 				text = this.game.add.existing(new FightText(this.game, 'workers win', 6000));
 

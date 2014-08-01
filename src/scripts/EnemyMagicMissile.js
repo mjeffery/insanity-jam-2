@@ -46,6 +46,7 @@
 		charge: function(x, y) {
 			this.reset(x, y);
 			this.body.setZeroVelocity();
+			this.lifespan = 0;
 
 			this.state = 'charging';
 		},
@@ -67,6 +68,7 @@
 		onCollidesGround: function(body, groundBody, shape, groundShape) {
 			switch(this.state) {
 				case 'falling':
+					this.lifespan = 10000;
 					this.state = 'grounded';
 					this.body.moveLeft( this.dir === Phaser.LEFT ? 500 : -500);
 					break;
