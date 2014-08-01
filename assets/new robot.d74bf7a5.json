@@ -1,0 +1,182 @@
+	{ 
+		
+		"robot chest": [
+			
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   24, -0.5  ,  25, -0.5  ,  18.5, 31  ,  -0.5, 7  ]
+				}  ,
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   56.5, 38  ,  25, -0.5  ,  69.5, 6  ]
+				}  ,
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   25, -0.5  ,  56.5, 38  ,  51.5, 111  ,  31, 111.5  ,  5.5, 95  ]
+				}  ,
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   51.5, 111  ,  56.5, 38  ,  71.5, 95  ]
+				}  
+		]
+		
+		, 
+		"robot head": [
+			
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   35, 39  ,  2, 39  ,  2, 4  ,  36, 3  ]
+				}  
+		]
+		
+		, 
+		"robot left boot": [
+			
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   7, 91  ,  23, 52.5  ,  60.5, 18  ,  66, 91  ]
+				}  ,
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   55, -0.5  ,  56, -0.5  ,  65.5, 3  ,  60.5, 18  ,  34.5, 24  ,  25.5, 7  ]
+				}  ,
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   23, 52.5  ,  7, 91  ,  -0.5, 71  ]
+				}  ,
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   34.5, 24  ,  60.5, 18  ,  23, 52.5  ]
+				}  
+		]
+		
+		, 
+		"robot left fist": [
+			
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   52.5, 19  ,  13.5, 53  ,  0.5, 33  ,  7.5, 8  ,  19, -0.5  ,  20, -0.5  ,  44.5, 2  ]
+				}  ,
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   4, 82.5  ,  0.5, 33  ,  13.5, 53  ,  14.5, 82  ]
+				}  
+		]
+		
+		, 
+		"robot left thigh": [
+			
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   2.5, 113  ,  6.5, 28  ,  16.5, 23  ,  23.5, 108  ,  18, 120.5  ]
+				}  ,
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   23.5, 9  ,  16.5, 23  ,  6.5, 28  ,  7, -0.5  ,  18, -0.5  ]
+				}  ,
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   7, -0.5  ,  6.5, 28  ,  -0.5, 5  ]
+				}  
+		]
+		
+		, 
+		"robot left arm": [
+			
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   79, 19.5  ,  1, 46.5  ,  8, 33.5  ,  61, -0.5  ,  62, -0.5  ,  77, 1.5  ]
+				}  
+		]
+		
+		, 
+		"robot right arm": [
+			
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   9, -0.5  ,  10, -0.5  ,  42.5, 11  ,  75.5, 35  ,  80, 47.5  ,  6, 22.5  ,  -0.5, 14  ]
+				}  
+		]
+		
+		, 
+		"robot right boot": [
+			
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   6, 14  ,  9, -0.5  ,  10, -0.5  ,  45, 56.5  ,  59, 91  ,  1, 91  ]
+				}  ,
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   59, 91  ,  45, 56.5  ,  66, 69.5  ]
+				}  ,
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   9, -0.5  ,  6, 14  ,  1.5, 4  ]
+				}  ,
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   29, 17  ,  10, -0.5  ,  40, 4.5  ]
+				}  ,
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   45, 56.5  ,  10, -0.5  ,  29, 17  ]
+				}  
+		]
+		
+		, 
+		"robot right fist": [
+			
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   36.5, 80  ,  40.5, 60  ,  52.5, 69  ,  46, 82.5  ]
+				}  ,
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   13, -0.5  ,  14, -0.5  ,  33.5, 47  ,  0.5, 23  ,  0.5, 8  ]
+				}  ,
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   47.5, 14  ,  52.5, 69  ,  40.5, 60  ,  33.5, 47  ,  14, -0.5  ,  39, 1.5  ]
+				}  
+		]
+		
+		, 
+		"robot right thigh": [
+			
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   16.5, 26  ,  6.5, 28  ,  -0.5, 9  ,  6, -0.5  ,  7, -0.5  ,  23.5, 7  ]
+				}  ,
+				{
+					"density": 2, "friction": 0, "bounce": 0, 
+					"filter": { "categoryBits": 1, "maskBits": 65535 },
+					"shape": [   -0.5, 113  ,  6.5, 28  ,  16.5, 26  ,  20.5, 116  ,  11, 120.5  ]
+				}  
+		]
+		
+	}
