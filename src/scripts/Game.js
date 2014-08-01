@@ -3,6 +3,7 @@
 
 	Game.prototype = {
 		create: function() {
+			
 			var physics = this.game.physics,
 				add = this.add,
 				debugBodies = false;
@@ -82,16 +83,11 @@
 			enemy.events.onCommandResume.add(function() { console.log('commands resumed')});
 			enemy.events.onDefeated.add(this.onDefeated, this);
 
-			//temp, replace with Instructions
-			controller.onMatchStart();
-			robot.onMatchStart();
 
-			/*
 			var instructions = new Instructions(this.game);
-			instructions.events.onComplete.addOnce(controller.onMatchStart, controller);
-			instructions.events.onComplete.addOnce(robot.onMatchStart, robot);
-			*/
+			instructions.events.onComplete.addOnce(this.onInstructionsComplete, this);
 
+			this.fadeIn(500, 700);
 		},
 
 		update: function() {
@@ -127,6 +123,22 @@
 			//this.game.debug.body(this.enemy);
 			//this.game.debug.body(this.robot.arcade);
 			//this.game.debug.body(this.ground.arcade);
+		},
+
+		onInstructionsComplete: function() {
+			var game = this.game,
+				robot = this.robot,
+				controller = this.enemyController;
+
+			game.add.existing(new FightText(game, 'final round'))
+			   .start().addOnce(function() {
+			   		game.add.existing(new FightText(game, 'ready'))
+				   	   .start().addOnce(function() {
+							robot.onMatchStart();
+							controller.onMatchStart();
+					   		game.add.existing(new FightText(game, 'fight')).start();
+					   })
+			   });
 		},
 
 		onDefeated: function(loser) {

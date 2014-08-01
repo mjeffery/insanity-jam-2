@@ -3,10 +3,13 @@
 exports.FadeMixin = Mixin.create({
 	fader: function() {
 		var game = this.game,
-			fader = this.add.tileSprite(0, 0, 800, 600, 'black');
-
+			fader = this.add.sprite(0, 0,'black');
+		
+		fader.width = 800;
+		fader.height = 600;
 		fader.fixedToCamera = true;
 		game.world.bringToTop(fader);
+		fader.bringToTop();
 
 		return fader;
 	},

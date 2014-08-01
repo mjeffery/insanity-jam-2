@@ -9,6 +9,7 @@
 		},
 		create: function() {
 			this.state.start('preload');
+			this.stage.setBackgroundColor('#530301');
 		}
 	}
 

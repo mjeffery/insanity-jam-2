@@ -3,8 +3,10 @@
 		Phaser.Group.call(this, game);
 
 		var pages = this.pages = [
-			game.make.sprite(0, 0, 'instructions-page-1'),
-			game.make.sprite(0, 0, 'instructions-page-2')
+			game.make.sprite(0, 0, 'instructions-atlas', 'story'),
+			game.make.sprite(0, 0, 'instructions-atlas', 'instructions for keys'),
+			game.make.sprite(0, 0, 'instructions-atlas', 'instructions for strings'),
+			game.make.sprite(0, 0, 'instructions-atlas', 'instructions for blocks')
 		];
 
 		_.forEach(pages, function(page) {
@@ -27,8 +29,7 @@
 
 	_.extend(Instructions, {
 		preload: function(load) {
-			load.image('instructions-page-1', 'assets/img/instructions for keys.png');
-			load.image('instructions-page-2', 'assets/img/instructions for strings.png');
+			load.atlasJSONArray('instructions-atlas', 'assets/atlas/instructions.png', 'assets/atlas/instructions.json');
 		}
 	});
 
